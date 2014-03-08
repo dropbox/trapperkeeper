@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+import argparse
+import logging
+import oid_translate
+from pysnmp.carrier.asynsock.dispatch import AsynsockDispatcher
+from pysnmp.carrier.asynsock.dgram import udp
+
+from trapperkeeper.callbacks import TrapperCallback
+from trapperkeeper.handlers import Handlers
+from trapperkeeper.models import get_db_engine, Session
+
+
+def main():
+    import os
+
+    # TODO(gary) Remove before committing. Just for testing.
+    os.environ["MIBS"]="ALL"
+    os.environ["MIBDIRS"]="+/usr/share/mibs/local/"
+    oid_translate.init_mibs()
+
+    handlers = Handlers.from_file("trapperkeeper.yaml")
+
+    db_engine = get_db_engine(debug=True)
+    Session.configure(bind=db_engine)
+
+    conn = Session()
+    cb = TrapperCallback(conn, handlers)
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)-15s\t%(levelname)s\t%(message)s"
+    )
+
+    transport_dispatcher = AsynsockDispatcher()
+    transport_dispatcher.registerRecvCbFun(cb)
+    transport_dispatcher.registerTransport(
+        udp.domainName, udp.UdpSocketTransport().openServerMode(("0.0.0.0", 162))
+    )
+
+    transport_dispatcher.jobStarted(1)
+
+    try:
+        transport_dispatcher.runDispatcher()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print "Bye"
+        transport_dispatcher.closeDispatcher()
+
+
+if __name__ == "__main__":
+    main()
