@@ -7,28 +7,40 @@ from pysnmp.carrier.asynsock.dispatch import AsynsockDispatcher
 from pysnmp.carrier.asynsock.dgram import udp
 
 from trapperkeeper.callbacks import TrapperCallback
-from trapperkeeper.handlers import Handlers
+from trapperkeeper.config import Config
 from trapperkeeper.models import get_db_engine, Session
+from trapperkeeper.utils import get_template_env
+
+
+DEFAULT_LOGLEVEL = logging.INFO
+def _get_loglevel(args):
+    verbose = args.verbose * 10
+    quiet = args.quiet * 10
+    return DEFAULT_LOGLEVEL - verbose + quiet
 
 
 def main():
-    import os
 
-    # TODO(gary) Remove before committing. Just for testing.
-    os.environ["MIBS"]="ALL"
-    os.environ["MIBDIRS"]="+/usr/share/mibs/local/"
-    oid_translate.init_mibs()
+    parser = argparse.ArgumentParser(description="SNMP Trap Collector.")
+    parser.add_argument("-c", "--config", default="/etc/trapperkeeper.yaml",
+                        help="Path to config file.")
+    parser.add_argument("-v", "--verbose", action="count", default=0, help="Increase logging verbosity.")
+    parser.add_argument("-q", "--quiet", action="count", default=0, help="Decrease logging verbosity.")
+    args = parser.parse_args()
 
-    handlers = Handlers.from_file("trapperkeeper.yaml")
+    oid_translate.load_mibs()
 
-    db_engine = get_db_engine(debug=True)
+    config = Config.from_file(args.config)
+
+    db_engine = get_db_engine(config["database"])
     Session.configure(bind=db_engine)
 
     conn = Session()
-    cb = TrapperCallback(conn, handlers)
+    template_env = get_template_env()
+    cb = TrapperCallback(conn, template_env, config)
 
     logging.basicConfig(
-        level=logging.INFO,
+        level=_get_loglevel(args),
         format="%(asctime)-15s\t%(levelname)s\t%(message)s"
     )
 

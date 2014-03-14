@@ -16,13 +16,8 @@ from constants import NAME_TO_PY_MAP, SNMP_TRAP_OID, ASN_TO_NAME_MAP
 Session = sessionmaker()
 Model = declarative_base()
 
-def get_db_engine(debug=False):
-    if debug:
-        uri = "sqlite:///trapperkeeper.sqlite"
-    else:
-        pass
-
-    return create_engine(uri, pool_recycle=300)
+def get_db_engine(url):
+    return create_engine(url, pool_recycle=300)
 
 
 class Notification(Model):
@@ -52,6 +47,15 @@ class Notification(Model):
     @staticmethod
     def _from_pdu_v1(host, proto_module, version, pdu):
         trapoid = str(proto_module.apiTrapPDU.getEnterprise(pdu))
+
+        generic = int(proto_module.apiTrapPDU.getGenericTrap(pdu))
+        specific = int(proto_module.apiTrapPDU.getSpecificTrap(pdu))
+
+        if generic == 6:  # Enterprise Specific Traps
+            trapoid = "%s.0.%s" % (trapoid, specific)
+        else:
+            trapoid = "%s.%s" % (trapoid, generic + 1)
+
         trap_type = "trap"
         # v1 doesn't have request_id. Use timestamp in it's place.
         request_id = int(proto_module.apiTrapPDU.getTimeStamp(pdu))
@@ -120,3 +124,8 @@ class VarBind(Model):
 
     def pprint(self):
         print "\t", self.oid, "(%s)" % self.value_type, "=", self.value
+
+    def __repr__(self):
+        return "Varbind(oid=%s, value_type=%s, value=%s)" % (
+            repr(self.oid), repr(self.value_type), repr(self.value)
+        )

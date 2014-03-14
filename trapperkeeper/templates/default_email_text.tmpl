@@ -1,0 +1,8 @@
+{{ trap.oid|to_mibname }}
+
+Source Host: {{ trap.host|hostname_or_ip }}
+Destination Host: {{ dest_host }}
+
+{% for varbind in trap.varbinds %}
+  {{ varbind.oid|to_mibname }}: {{ varbind|varbind_value }}
+{% endfor %}
