@@ -39,3 +39,5 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+tests/mibs/.index

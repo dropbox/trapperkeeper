@@ -1,8 +1,8 @@
-
-import yaml
-import copy
-from oid_translate import ObjectId
 import collections
+import copy
+import logging
+from oid_translate import ObjectId
+import yaml
 
 from trapperkeeper.exceptions import ConfigError
 
@@ -78,7 +78,10 @@ class Handlers(object):
                     templates.get(template, {})
                 ))
             Handlers.update(full_config, config)
-            oid = ObjectId(name).oid
-            traphandlers[oid] = full_config
+            try:
+                oid = ObjectId(name).oid
+                traphandlers[oid] = full_config
+            except ValueError, err:
+                logging.warning("Failed to process traphandler %s: %s", name, err)
 
         return Handlers(defaults, traphandlers)

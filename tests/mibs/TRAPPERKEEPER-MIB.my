@@ -1,0 +1,20 @@
+TRAPPERKEEPER-MIB DEFINITIONS ::= BEGIN
+    IMPORTS applications FROM DROPBOX-SMI;
+
+trapperkeeper OBJECT IDENTIFIER ::= { applications 1 }
+
+testtraps OBJECT IDENTIFIER ::= { trapperkeeper 1 }
+
+testV1Trap TRAP-TYPE
+    ENTERPRISE testtraps
+    VARIABLES { sysLocation }
+    DESCRIPTION "Used for testing v1 traps on trapperkeeper"
+    ::= 1
+
+testV2Trap NOTIFICATION-TYPE
+    OBJECTS { sysLocation }
+    STATUS current
+    DESCRIPTION "An example of an SMIv2 notification"
+    ::= { testtraps 1 }
+
+END

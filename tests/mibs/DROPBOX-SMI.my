@@ -1,0 +1,35 @@
+DROPBOX-SMI DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-IDENTITY,
+    enterprises
+        FROM SNMPv2-SMI;
+
+dropbox MODULE-IDENTITY
+
+    LAST-UPDATED    "201403130000Z"
+    ORGANIZATION    "Dropbox, Inc."
+    CONTACT-INFO
+            "Dropbox
+
+            E-mail: pen-contact@dropbox.com"
+
+    DESCRIPTION
+        "The Structure of Management Information for the
+        Dropbox enterprise."
+
+    REVISION        "201403130000Z"
+    DESCRIPTION
+        "Initial version of this module."
+
+    ::= { enterprises 42921 }
+
+
+applications OBJECT-IDENTITY
+    STATUS  current
+    DESCRIPTION
+        "Namespace for various applications at Dropbox."
+    ::= { dropbox 1 }
+
+END
