@@ -42,7 +42,7 @@ class TrapperCallback(object):
             "hostname": hostname_or_ip(trap.host),
         }
         ctxt = dict(trap=trap, dest_host=self.hostname)
-        send_trap_email(recipients, "trapperkeeper@dropbox.com",
+        send_trap_email(recipients, "trapperkeeper",
                         subject, self.template_env, ctxt)
 
     def _call(self, transport_dispatcher, transport_domain, transport_address, whole_msg):
