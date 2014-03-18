@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import argparse
-import os
 import logging
+from oid_translate import load_mibs
+import os
 import sys
 import tornado.ioloop
 import tornado.httpserver
@@ -11,7 +12,8 @@ import tornado.web
 import trapdoor
 from trapdoor.routes import HANDLERS
 from trapperkeeper.models import get_db_engine, Session
-from trapperkeeper.utils import get_loglevel
+from trapperkeeper.utils import get_template_env, get_loglevel, CachingResolver
+
 
 
 sa_log = logging.getLogger("sqlalchemy.engine.base.Engine")
@@ -49,10 +51,15 @@ def main(argv):
 
     tornado_settings = {
         "static_path": os.path.join(os.path.dirname(trapdoor.__file__), "static"),
-        "template_path":  os.path.join(os.path.dirname(trapdoor.__file__)),
         "debug": config["debug"],
         "xsrf_cookies": True,
     }
+
+    resolver = CachingResolver(timeout=300)
+    template_env = get_template_env(
+        "trapdoor",
+        hostname_or_ip=resolver.hostname_or_ip
+    )
 
     db_engine = get_db_engine(config["database"])
     Session.configure(bind=db_engine)
@@ -60,6 +67,7 @@ def main(argv):
         "debug": config["debug"],
         "db_engine": db_engine,
         "db_session": Session,
+        "template_env": template_env,
     }
 
     log_level = get_loglevel(args)
@@ -77,6 +85,7 @@ def main(argv):
     server.bind(config["port"])
     server.start(config["num_processes"])
     try:
+        load_mibs()
         tornado.ioloop.IOLoop.instance().start()
     except KeyboardInterrupt:
         tornado.ioloop.IOLoop.instance().stop()

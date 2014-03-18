@@ -2,6 +2,35 @@
 
 {% block content %}
 
-Hello, World!
+<div class="row"><div class="span11">
+    <table class="table table-hover">
+        <tr>
+            <th>&nbsp;</th>
+            <th>Hostname</th>
+            <th>Trap</th>
+            <th>Received</th>
+            <th>Expiration</th>
+        </tr>
+        {% if not traps %}
+            <tr><td colspan="5">
+                <div class="alert">No Active Traps.</div>
+            </td></tr>
+        {% endif %}
+        {% for trap in traps %}
+            <tr {% if now < trap.expires %}class="danger"{% endif %}>
+                <td class="buttons-column">
+                    <button title="Expand" class="btn btn-default btn-xs"><i class="fa fa-level-down"></i></button>
+                    {% if now < trap.expires %}
+                        <button title="Resolve" class="btn btn-default btn-xs"><i class="fa fa-check fa-sm"></i></button>
+                    {% endif %}
+                </td>
+                <td>{{trap.host|hostname_or_ip}}</td>
+                <td>{{trap.oid|to_mibname}}</td>
+                <td>{{trap.sent}}</td>
+                <td>{{trap.expires}}</span></td>
+            </tr>
+        {% endfor %}
+    </table>
+</div></div>
 
-{% end %}
+{% endblock %}

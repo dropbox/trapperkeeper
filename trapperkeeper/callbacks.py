@@ -9,15 +9,16 @@ import socket
 
 from trapperkeeper.constants import SNMP_VERSIONS
 from trapperkeeper.models import Notification
-from trapperkeeper.utils import parse_time_string, send_trap_email, hostname_or_ip
+from trapperkeeper.utils import parse_time_string, send_trap_email
 
 
 class TrapperCallback(object):
-    def __init__(self, conn, template_env, config):
+    def __init__(self, conn, template_env, config, resolver):
         self.conn = conn
         self.template_env = template_env
         self.config = config
         self.hostname = socket.gethostname()
+        self.resolver = resolver
 
     def __call__(self, *args, **kwargs):
         try:
@@ -40,7 +41,7 @@ class TrapperCallback(object):
             "trap_oid": trap.oid,
             "trap_name": ObjectId(trap.oid).name,
             "ipaddress": trap.host,
-            "hostname": hostname_or_ip(trap.host),
+            "hostname": self.resolver.hostname_or_ip(trap.host),
         }
         ctxt = dict(trap=trap, dest_host=self.hostname)
         send_trap_email(recipients, "trapperkeeper",

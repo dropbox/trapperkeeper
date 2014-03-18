@@ -4,18 +4,18 @@ from oid_translate import ObjectId
 import re
 import struct
 import socket
-
 import smtplib
+import time
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
 _TIME_STRING_RE = re.compile(
-    r'(?:(?P<days>\d+)d)?'
-    r'(?:(?P<hours>\d+)h)?'
-    r'(?:(?P<minutes>\d+)m)?'
-    r'(?:(?P<seconds>\d+)s)?'
+    r"(?:(?P<days>\d+)d)?"
+    r"(?:(?P<hours>\d+)h)?"
+    r"(?:(?P<minutes>\d+)m)?"
+    r"(?:(?P<seconds>\d+)s)?"
 )
 
 DATEANDTIME_SLICES = (
@@ -84,20 +84,13 @@ def decode_date(hex_string):
     return "%d-%d-%d,%d:%d:%d.%d,%s%d:%d" % tuple(format_values)
 
 
-def hostname_or_ip(ip):
-    try:
-        return socket.gethostbyaddr(ip)[0]
-    except socket.error:
-        return ip
-
-
-def get_template_env():
+def get_template_env(package="trapperkeeper", **kwargs):
     filters = {
         "to_mibname": _to_mibname_filter,
         "varbind_value": _varbind_value_filter,
-        "hostname_or_ip": hostname_or_ip,
     }
-    env = Environment(loader=PackageLoader('trapperkeeper', 'templates'))
+    filters.update(kwargs)
+    env = Environment(loader=PackageLoader(package, "templates"))
     env.filters.update(filters)
     return env
 
@@ -106,16 +99,16 @@ def send_trap_email(recipients, sender, subject, template_env, context):
     text_template = template_env.get_template("default_email_text.tmpl").render(**context)
     html_template = template_env.get_template("default_email_html.tmpl").render(**context)
 
-    text = MIMEText(text_template, 'plain')
-    html = MIMEText(html_template, 'html')
+    text = MIMEText(text_template, "plain")
+    html = MIMEText(html_template, "html")
 
     if isinstance(recipients, basestring):
         recipients = recipients.split(",")
 
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = subject
-    msg['From'] = sender
-    msg['To'] = ", ".join(recipients)
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = sender
+    msg["To"] = ", ".join(recipients)
     msg.attach(text)
     msg.attach(html)
 
@@ -128,4 +121,31 @@ def get_loglevel(args):
     verbose = args.verbose * 10
     quiet = args.quiet * 10
     return logging.getLogger().level - verbose + quiet
+
+
+class CachingResolver(object):
+
+    def __init__(self, timeout):
+        self.timeout = timeout
+        self._cache = {}
+
+    def _hostname_or_ip(self, address):
+        try:
+            return socket.gethostbyaddr(address)[0]
+        except socket.error:
+            return address
+
+    def hostname_or_ip(self, address):
+        result = self._cache.get(address, None)
+        now = time.time()
+        if result is None or result[0] <= now:
+            logging.debug("Cache miss for %s in hostname_or_ip", address)
+            result = (
+                now + self.timeout,             # Expiration
+                self._hostname_or_ip(address),  # Data
+            )
+            self._cache[address] = result
+
+        return result[1]
+
 

@@ -3,7 +3,7 @@
 BASE_DIR=$( dirname $0 )
 
 DEST="localhost"
-COMMON_OPTS="-Le -mTRAPPERKEEPER-MIB -M+"${BASE_DIR}/mibs" -c public"
+COMMON_OPTS="-Ln -mTRAPPERKEEPER-MIB -M+"${BASE_DIR}/mibs" -c public"
 SYSLOC_VARBIND="SNMPv2-MIB::sysLocation.0 s TrapperKeeper-Test"
 
 snmptrap -v 1 $COMMON_OPTS $DEST TRAPPERKEEPER-MIB::testtraps "" 6 1 "" $SYSLOC_VARBIND

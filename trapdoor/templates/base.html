@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>{% block title %} Trapdoor {% end %}</title>
+    <title>{% block title %} Trapdoor {% endblock %}</title>
     <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.1/css/font-awesome.min.css" rel="stylesheet" media="screen">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" media="screen">
     <link href="/static/css/trapdoor.css" rel="stylesheet" media="screen">
-    {% block extra_head %} {% end %}
+    {% block extra_head %} {% endblock %}
   </head>
   <body>
     <div class="container">
@@ -16,14 +16,14 @@
       </div>
 
       <div class="row content">
-        {% block content %} {% end %}
+        {% block content %} {% endblock %}
       </div>
     </div>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.13.1.13.1.1rap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.4.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 
     <script type="text/javascript">
       moment.defaultFormat = "MMM D, YYYY, h:mm a";
@@ -38,7 +38,7 @@
       });
     </script>
 
-    {% block script %} {% end %}
+    {% block script %} {% endblock %}
   </body>
 </html>
 

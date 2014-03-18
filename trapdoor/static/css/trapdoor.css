@@ -23,7 +23,7 @@ body {
 .content {
     background: #F9F9F9;
     padding: 10px 25px 25px 25px;
-    margin: 10px 0px 0px 0px;
+    margin: -10px 0px 0px 0px;
 }
 
 .center {
@@ -38,6 +38,10 @@ a.link {
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover {
   background-color: #ddd;
+}
+
+td.buttons-column {
+    width: 63px;
 }
 
 /* Bootstrap Navbar */

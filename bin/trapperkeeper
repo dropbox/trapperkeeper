@@ -9,7 +9,7 @@ from pysnmp.carrier.asynsock.dgram import udp
 from trapperkeeper.callbacks import TrapperCallback
 from trapperkeeper.config import Config
 from trapperkeeper.models import get_db_engine, Session
-from trapperkeeper.utils import get_template_env, get_loglevel
+from trapperkeeper.utils import get_template_env, get_loglevel, CachingResolver
 from trapperkeeper import __version__
 
 
@@ -34,8 +34,11 @@ def main():
     Session.configure(bind=db_engine)
 
     conn = Session()
-    template_env = get_template_env()
-    cb = TrapperCallback(conn, template_env, config)
+    resolver = CachingResolver(timeout=300)
+    template_env = get_template_env(
+        hostname_or_ip=resolver.hostname_or_ip
+    )
+    cb = TrapperCallback(conn, template_env, config, resolver)
 
     logging.basicConfig(
         level=get_loglevel(args),

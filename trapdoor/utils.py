@@ -1,6 +1,5 @@
 import tornado.web
 
-
 def print_date(date_obj):
     return date_obj.strftime("%Y-%m-%d %I:%M %p")
 
@@ -15,31 +14,15 @@ class TrapdoorHandler(tornado.web.RequestHandler):
     def on_finish(self):
         self.db.close()
 
-    def get_template_namespace(self):
-        namespace = super(TrapdoorHandler, self).get_template_namespace()
-        namespace.update({
-            "print_date": print_date,
-        })
-        return namespace
+    def render_template(self, template_name, **kwargs):
+        template = self.application.my_settings["template_env"].get_template(template_name)
+        content = template.render(kwargs)
+        return content
 
-    def get_current_user(self):
-        username = self.debug_user
-        if not username:
-            username = self.request.headers.get("X-Pp-User")
-
-        if not username:
-            return
-
-        username = username.split("@")[0]
-
-        user = self.db.query(User).filter_by(username=username).first()
-        if not user:
-            user = User(username=username)
-            self.db.add(user)
-            self.db.commit()
-
-        return user
+    def render(self, template_name, **kwargs):
+        kwargs.update(self.get_template_namespace())
+        self.write(self.render_template(template_name, **kwargs))
 
     def notfound(self):
         self.set_status(404)
-        self.render("templates/errors/notfound.html")
+        self.render("errors/notfound.html")
