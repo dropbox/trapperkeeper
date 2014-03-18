@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %} Trapdoor {% end %}</title>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.1/css/font-awesome.min.css" rel="stylesheet" media="screen">
+    <link href="/static/css/trapdoor.css" rel="stylesheet" media="screen">
+    {% block extra_head %} {% end %}
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <nav class="navbar navbar-default" role="navigation">
+          <a class="navbar-brand" href="/">trapdoor.</a>
+        </nav>
+      </div>
+
+      <div class="row content">
+        {% block content %} {% end %}
+      </div>
+    </div>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.13.1.13.1.1rap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.4.0/moment.min.js"></script>
+
+    <script type="text/javascript">
+      moment.defaultFormat = "MMM D, YYYY, h:mm a";
+      moment.lang('en', {
+        meridiem: function(hours, minutes, isLower){
+            if (hours > 11) {
+                return isLower ? 'p.m.' : 'P.M.';
+            } else {
+                return isLower ? 'a.m.' : 'A.M.';
+            }
+        }
+      });
+    </script>
+
+    {% block script %} {% end %}
+  </body>
+</html>
+

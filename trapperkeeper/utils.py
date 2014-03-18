@@ -1,4 +1,5 @@
 from jinja2 import Environment, PackageLoader
+import logging
 from oid_translate import ObjectId
 import re
 import struct
@@ -121,3 +122,10 @@ def send_trap_email(recipients, sender, subject, template_env, context):
     smtp = smtplib.SMTP("localhost")  # TODO(gary): Allow config for this.
     smtp.sendmail(sender, recipients, msg.as_string())
     smtp.quit()
+
+
+def get_loglevel(args):
+    verbose = args.verbose * 10
+    quiet = args.quiet * 10
+    return logging.getLogger().level - verbose + quiet
+

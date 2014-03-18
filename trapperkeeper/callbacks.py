@@ -3,6 +3,7 @@ import logging
 from oid_translate import ObjectId
 
 from pyasn1.codec.ber import decoder
+from pyasn1.type.error import ValueConstraintError
 from pysnmp.proto import api
 import socket
 
@@ -57,11 +58,18 @@ class TrapperCallback(object):
             logging.error("Unsupported SNMP version %s", msg_version)
             return
 
-        req_msg, whole_msg = decoder.decode(whole_msg, asn1Spec=proto_module.Message(),)
         host = transport_address[0]
-        req_pdu = proto_module.apiMessage.getPDU(req_msg)
-        # community = proto_module.apiMessage.getCommunity(req_msg)
         version = SNMP_VERSIONS[msg_version]
+
+        try:
+            req_msg, whole_msg = decoder.decode(whole_msg, asn1Spec=proto_module.Message(),)
+        except ValueConstraintError as err:
+            logging.warning("Failed to receive trap (%s) from %s: %s", version, host, err)
+            return
+        req_pdu = proto_module.apiMessage.getPDU(req_msg)
+
+        # TODO(gary): Require matching community string or bail.
+        # community = proto_module.apiMessage.getCommunity(req_msg)
 
         if not req_pdu.isSameTypeWith(proto_module.TrapPDU()):
             logging.warning("Received non-trap notification from %s", host)

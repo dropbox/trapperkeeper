@@ -9,15 +9,8 @@ from pysnmp.carrier.asynsock.dgram import udp
 from trapperkeeper.callbacks import TrapperCallback
 from trapperkeeper.config import Config
 from trapperkeeper.models import get_db_engine, Session
-from trapperkeeper.utils import get_template_env
+from trapperkeeper.utils import get_template_env, get_loglevel
 from trapperkeeper import __version__
-
-
-DEFAULT_LOGLEVEL = logging.INFO
-def _get_loglevel(args):
-    verbose = args.verbose * 10
-    quiet = args.quiet * 10
-    return DEFAULT_LOGLEVEL - verbose + quiet
 
 
 def main():
@@ -45,7 +38,7 @@ def main():
     cb = TrapperCallback(conn, template_env, config)
 
     logging.basicConfig(
-        level=_get_loglevel(args),
+        level=get_loglevel(args),
         format="%(asctime)-15s\t%(levelname)s\t%(message)s"
     )
 

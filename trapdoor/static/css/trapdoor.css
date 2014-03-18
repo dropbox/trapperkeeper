@@ -1,0 +1,103 @@
+body {
+    /* Background image comes from http://subtlepatterns.com/
+     * and is CC BY-SA 3.0 - Subtle Patterns © Atle Mo.
+     *
+     * http://subtlepatterns.com/skulls/
+     */
+    background-image:url('/static/images/skulls/skulls.png');
+
+    /* Force scrollbar so collapsed divs don't jerk
+     * the page around when they grow larger than
+     * the page.
+     */
+    overflow-y: scroll;
+    margin-bottom: 20px;
+}
+
+.container {
+    background: #F9F9F9;
+    margin-top: 0px;
+    box-shadow: 4px 4px 5px 1px rgba(0, 0, 0, 0.4);
+}
+
+.content {
+    background: #F9F9F9;
+    padding: 10px 25px 25px 25px;
+    margin: 10px 0px 0px 0px;
+}
+
+.center {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+a.link {
+    cursor: pointer;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover {
+  background-color: #ddd;
+}
+
+/* Bootstrap Navbar */
+.navbar-default {
+    background-color: #e74c3c;
+    border-color: #c0392b;
+    border-radius: 0px;
+}
+.navbar-default .navbar-brand {
+    color: #ecf0f1;
+}
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+    color: #ffbbbc;
+}
+.navbar-default .navbar-text {
+    color: #ecf0f1;
+}
+.navbar-default .navbar-nav > li > a {
+    color: #ecf0f1;
+}
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+    color: #ffbbbc;
+}
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+    color: #ffbbbc;
+    background-color: #c0392b;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+    color: #ffbbbc;
+    background-color: #c0392b;
+}
+.navbar-default .navbar-toggle {
+    border-color: #c0392b;
+}
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+    background-color: #c0392b;
+}
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #ecf0f1;
+}
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+    border-color: #ecf0f1;
+}
+.navbar-default .navbar-link {
+    color: #ecf0f1;
+}
+.navbar-default .navbar-link:hover {
+    color: #ffbbbc;
+}
+
+@media (max-width: 767px) {
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+        color: #ecf0f1;
+    }
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: #ffbbbc;
+    }
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+        color: #ffbbbc;
+        background-color: #c0392b;
+    }
+}

@@ -1,7 +1,8 @@
 # trapperkeeper
 
 ### Description
-TrapperKeeper is an SNMP trap daemon for ingesting and exposing traps.
+TrapperKeeper is an SNMP trap daemon for ingesting and exposing traps. _This is a
+work in progress and not ready for general consumption._
 
 ### Installation
 
