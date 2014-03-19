@@ -4,3 +4,4 @@ include README.md
 include requirements.txt
 recursive-include trapdoor/static *
 recursive-include trapdoor/templates *
+recursive-include trapperkeeper/templates *
