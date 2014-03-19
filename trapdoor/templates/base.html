@@ -21,22 +21,7 @@
     </div>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.13.1.13.1.1rap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
-
-    <script type="text/javascript">
-      moment.defaultFormat = "MMM D, YYYY, h:mm a";
-      moment.lang('en', {
-        meridiem: function(hours, minutes, isLower){
-            if (hours > 11) {
-                return isLower ? 'p.m.' : 'P.M.';
-            } else {
-                return isLower ? 'a.m.' : 'A.M.';
-            }
-        }
-      });
-    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
     {% block script %} {% endblock %}
   </body>

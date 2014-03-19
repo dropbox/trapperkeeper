@@ -5,11 +5,27 @@
 <div class="row"><div class="span11">
     <form method="post" action="/resolve_all">
         {{ xsrf_form_html() }}
-        <button type="submit" title="Resolve" class="btn btn-danger pull-right">
+        <button
+            type="submit"
+            title="Resolve"
+            class="btn btn-danger pull-right"
+            {% if not num_active %}disabled{% endif %}
+        >
             <i class="fa fa-check"> Resolve All</i>
         </button>
     </form>
+    <div class="btn-group pull-right" style="padding-right: 10px;">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            Limit: {{limit}} <span class="caret"></span>
+        </button>
+            <ul class="dropdown-menu" role="menu">
+            <li><a href="#">25</a></li>
+            <li><a href="#">50</a></li>
+            <li><a href="#">100</a></li>
+        </ul>
+    </div>
 </div></div>
+
 
 <div class="row">&nbsp;</div>
 
@@ -30,7 +46,7 @@
         {% for trap in traps %}
             {% set expired = trap.expires != None and now >= trap.expires %}
             <tr class="clickable-row {% if not expired %}danger{% endif %}"
-                href="/trap?oid={{trap.oid}}&hostname={{trap.host}}">
+                href="/traps?oid={{trap.oid}}&hostname={{trap.host}}">
                 <td class="buttons-column">
                     {% if not expired %}
                         <form method="post" action="/resolve">
