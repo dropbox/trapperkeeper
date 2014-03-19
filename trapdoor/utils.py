@@ -1,9 +1,5 @@
 import tornado.web
 
-def print_date(date_obj):
-    return date_obj.strftime("%Y-%m-%d %I:%M %p")
-
-
 class TrapdoorHandler(tornado.web.RequestHandler):
 
     def initialize(self):
@@ -26,3 +22,14 @@ class TrapdoorHandler(tornado.web.RequestHandler):
     def notfound(self):
         self.set_status(404)
         self.render("errors/notfound.html")
+
+
+def print_date(date_obj):
+    if date_obj is None:
+        return ""
+    return date_obj.strftime("%Y-%m-%d %I:%M %p")
+
+
+FILTERS = {
+    "print_date": print_date,
+}

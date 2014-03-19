@@ -11,6 +11,7 @@ import tornado.web
 
 import trapdoor
 from trapdoor.routes import HANDLERS
+from trapdoor.utils import FILTERS
 from trapperkeeper.models import get_db_engine, Session
 from trapperkeeper.utils import get_template_env, get_loglevel, CachingResolver
 
@@ -58,7 +59,8 @@ def main(argv):
     resolver = CachingResolver(timeout=300)
     template_env = get_template_env(
         "trapdoor",
-        hostname_or_ip=resolver.hostname_or_ip
+        hostname_or_ip=resolver.hostname_or_ip,
+        **FILTERS
     )
 
     db_engine = get_db_engine(config["database"])

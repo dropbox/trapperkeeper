@@ -32,16 +32,28 @@ body {
     margin-right: auto;
 }
 
-a.link {
+a.link, .clickable-row {
     cursor: pointer;
 }
 
-.table-hover tbody tr:hover td, .table-hover tbody tr:hover {
+.table-hover tbody tr:hover td,
+.table-hover tbody tr:hover {
   background-color: #ddd;
 }
 
+.table-hover tbody tr.danger td,
+.table-hover tbody tr.danger {
+  background-color: #ff6666;
+  color: #000;
+}
+
+.table-hover tbody tr.danger:hover td,
+.table-hover tbody tr.danger:hover {
+  background-color: #f15151;
+}
+
 td.buttons-column {
-    width: 63px;
+    width: 32px;
 }
 
 /* Bootstrap Navbar */
