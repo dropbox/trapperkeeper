@@ -55,6 +55,8 @@
             <a class="btn btn-default disabled"><i class="fa fa-angle-left"></i></a>
         {% endif %}
 
+        <a class="btn btn-default disabled">Page {{ ((offset+limit)/limit)|int}}</a>
+
         {% if traps|length < limit %}
             <a class="btn btn-default disabled"><i class="fa fa-angle-right"></i></a>
         {% else %}
@@ -83,11 +85,16 @@
         {% endif %}
         {% for trap in traps %}
             {% set expired = trap.expires != None and now >= trap.expires %}
-            <tr class="clickable-row {% if not expired %}danger{% endif %}"
-                data-toggle="collapse" data-target="#toggle-details-{{trap.id}}"
-                data-trap-id="{{trap.id}}">
+            <tr class="{% if not expired %}danger{% endif %}">
                 <td class="buttons-column">
+                    <button class="btn btn-default btn-xs pull-left get-details"
+                            style="margin-right: 5px;"
+                            data-toggle="collapse" data-target="#toggle-details-{{trap.id}}"
+                            data-trap-id="{{trap.id}}">
+                        <i class="fa fa-level-down fa-sm"></i>
+                    </button>
                     {% if not expired %}
+                        <div class="pull-left">
                         <form method="post" action="/resolve">
                             <input type="hidden" name="host" value="{{trap.host}}">
                             <input type="hidden" name="oid" value="{{trap.oid}}">
@@ -96,6 +103,7 @@
                                 <i class="fa fa-check fa-sm"></i>
                             </button>
                         </form>
+                        </div>
                     {% endif %}
                 </td>
                 <td><a href="/{{ update_qs(request.arguments, offset=0, hostname=trap.host) }}">{{trap.host|hostname_or_ip}}</a></td>
@@ -106,6 +114,8 @@
             <tr id="trap-details-row-{{trap.id}}" class="trap-details-row">
                 <td class="trap-extend" colspan="5">
                     <div id="toggle-details-{{trap.id}}" class="collapse toggle-details">
+                        <div id="trap-details-{{trap.id}}">
+                        </div
                     </div>
                 </td>
             </tr>
@@ -127,6 +137,8 @@
             <a class="btn btn-default disabled"><i class="fa fa-angle-left"></i></a>
         {% endif %}
 
+        <a class="btn btn-default disabled">Page {{ ((offset+limit)/limit)|int}}</a>
+
         {% if traps|length < limit %}
             <a class="btn btn-default disabled"><i class="fa fa-angle-right"></i></a>
         {% else %}
@@ -142,7 +154,7 @@
     <script src="static/js/hb_templates.min.js"></script>
     <script type="text/javascript">
         $(function($) {
-            $(".clickable-row").click(function(event) {
+            $(".get-details").mouseover(function(event) {
                 var $this = $(this);
                 if ($this.data("details-grabbed")){
                     return;
@@ -150,7 +162,7 @@
                 $this.data("details-grabbed", "1")
 
                 var trap_id = $this.data("trap-id");
-                var $details_div = $("#toggle-details-" + trap_id);
+                var $details_div = $("#trap-details-" + trap_id);
 
                 $.getJSON("/api/varbinds/" + trap_id, function(data){
                     $details_div.append(
