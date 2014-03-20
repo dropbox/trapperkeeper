@@ -2,6 +2,12 @@ traphandlers:
     "SNMPv2-MIB::coldStart":
         use: "critical"
 
+    "TRAPPERKEEPER-MIB::testV2Trap":
+        severity: warning
+
+    "TRAPPERKEEPER-MIB::testV1Trap":
+        severity: critical
+
 templates:
     critical:
         expiration: null

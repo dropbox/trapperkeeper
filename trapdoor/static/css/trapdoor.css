@@ -15,13 +15,13 @@ body {
 }
 
 .container {
-    background: #F9F9F9;
+    background: #f9f9f9;
     margin-top: 0px;
     box-shadow: 4px 4px 5px 1px rgba(0, 0, 0, 0.4);
 }
 
 .content {
-    background: #F9F9F9;
+    background: #f9f9f9;
     padding: 10px 25px 25px 25px;
     margin: -10px 0px 0px 0px;
 }
@@ -41,32 +41,28 @@ table>tbody>tr>td.trap-extend {
     padding: 0px;
 }
 
-.table-hover tbody tr:hover td.trap-extend,
-.table-hover tbody tr td.trap-extend,
-.toggle-details > tr:hover
-{
-    background-color: #f9f9f9;
-    cursor: default;
+tr td:first-child {
+    width: 1%;
+    white-space: nowrap;
 }
 
 .toggle-details {
     padding: 8px;
 }
 
-.table-hover tbody tr:hover td,
-.table-hover tbody tr:hover {
-  background-color: #ddd;
+.table>tbody>tr.danger>td {
+    background-color: #ffa1a1;
+    color: #000;
 }
 
-.table-hover tbody tr.danger td,
-.table-hover tbody tr.danger {
-  background-color: #ffa1a1;
-  color: #000;
+.table>tbody>tr.warning>td {
+    background-color: #ffea94;
+    color: #000;
 }
 
-.table-hover tbody tr.danger:hover td,
-.table-hover tbody tr.danger:hover {
-  background-color: #f08c8c;
+.table>tbody>tr.success>td {
+    background-color: #9fe483;
+    color: #000;
 }
 
 td.buttons-column {

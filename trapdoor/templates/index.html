@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="row"><div class="span11">
+<div class="row"><div class="col-sm-12">
     
     <div class="pull-left">
         {% if hostname %}
@@ -87,8 +87,8 @@
 
 <div class="row">&nbsp;</div>
 
-<div class="row"><div class="span11">
-    <table class="table table-hover">
+<div class="row"><div class="col-sm-12">
+    <table class="table">
         <tr>
             <th>&nbsp;</th>
             <th>Hostname</th>
@@ -103,7 +103,14 @@
         {% endif %}
         {% for trap in traps %}
             {% set expired = trap.expires != None and now >= trap.expires %}
-            <tr class="{% if not expired %}danger{% endif %}">
+            {% if trap.severity == "critical"%}
+                {% set severity_label = "danger" %}
+            {% elif trap.severity == "informational"%}
+                {% set severity_label = "success" %}
+            {% else %}
+                {% set severity_label = "warning" %}
+            {% endif %}
+            <tr class="{% if not expired %}{{ severity_label }}{% endif %}">
                 <td class="buttons-column">
                     <button class="btn btn-default btn-xs pull-left get-details"
                             style="margin-right: 5px;"
@@ -132,7 +139,7 @@
             <tr id="trap-details-row-{{trap.id}}" class="trap-details-row">
                 <td class="trap-extend" colspan="5">
                     <div id="toggle-details-{{trap.id}}" class="collapse toggle-details">
-                        <div id="trap-details-{{trap.id}}">
+                        <div style="padding-left: 30px;"id="trap-details-{{trap.id}}">
                         </div
                     </div>
                 </td>
@@ -141,7 +148,7 @@
     </table>
 </div></div>
 
-<div class="row"><div class="span11 center">
+<div class="row"><div class="col-sm-12 center">
     <div class="btn-group">
         {% if offset == 0 %}
             <a class="btn btn-default disabled"><i class="fa fa-angle-double-left"></i></a>

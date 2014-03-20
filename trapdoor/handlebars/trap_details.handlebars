@@ -1,13 +1,10 @@
 {{#ifEmpty varbinds}}
-    <blockquote>
-      No Variable Bindings...
-    </blockquote>
+    No Variable Bindings...
 {{else}}
-    <blockquote>
         {{#each varbinds}}
-            <div><b>{{mibFormat this.name}}:</b>
-                {{this.pretty_value}}
+            <div class="row">
+                <div class="col-sm-5"><h5 class="pull-right">{{mibFormat this.name}}</h5></div>
+                <div class="col-sm-5"><h5>{{this.pretty_value}}</h5></div>
             </div>
         {{/each}}
-    </blockquote>
 {{/ifEmpty}}
