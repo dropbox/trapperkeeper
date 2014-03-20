@@ -8,6 +8,7 @@ HANDLERS = [
 
     # API
     (r"/api/varbinds/(?P<notification_id>\d+)", handlers.ApiVarBinds),
+    (r"/api/activetraps/?", handlers.ApiActiveTraps),
 
     # Default
     (r"/.*", handlers.NotFound),

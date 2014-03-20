@@ -121,3 +121,29 @@ class ApiVarBinds(TrapdoorHandler):
         varbinds = self.db.query(VarBind).filter(VarBind.notification_id == notification_id).all()
         varbinds = [varbind.to_dict(True) for varbind in varbinds]
         self.write(json.dumps(varbinds))
+
+
+class ApiActiveTraps(TrapdoorHandler):
+    def get(self):
+
+        now = datetime.utcnow()
+        hostname = self.get_argument("hostname", None)
+        oid = self.get_argument("oid", None)
+        severity = self.get_argument("severity", None)
+
+        active_query = (self.db
+            .query(
+                Notification.host,
+                Notification.oid,
+                Notification.severity)
+            .filter(or_(
+                Notification.expires >= now,
+                Notification.expires == None
+             ))
+            .group_by(Notification.host, Notification.oid)
+            .order_by(desc(Notification.sent))
+        )
+        active_query = filter_query(active_query, hostname, oid, severity)
+
+        traps = active_query.all()
+        self.write(json.dumps(traps))
