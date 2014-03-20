@@ -1,3 +1,4 @@
+import pytz
 import tornado.web
 
 class TrapdoorHandler(tornado.web.RequestHandler):
@@ -23,10 +24,13 @@ class TrapdoorHandler(tornado.web.RequestHandler):
         self.set_status(404)
         self.render("errors/notfound.html")
 
-
+# TODO(gary): Make timezone configurable.
+LOCALTZ = pytz.timezone('America/Los_Angeles')
 def print_date(date_obj):
     if date_obj is None:
         return ""
+
+    date_obj = date_obj.astimezone(LOCALTZ)
     return date_obj.strftime("%Y-%m-%d %I:%M %p")
 
 

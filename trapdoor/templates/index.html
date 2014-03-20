@@ -59,10 +59,10 @@
                         </form>
                     {% endif %}
                 </td>
-                <td>{{trap.host|hostname_or_ip}}</td>
-                <td>{{trap.oid|to_mibname}}</td>
-                <td>{{trap.sent|print_date}}</td>
-                <td>{{trap.expires|print_date}}</span></td>
+                <td><a href="?hostname={{trap.host}}">{{trap.host|hostname_or_ip}}</a></td>
+                <td><a href="?oid={{trap.oid}}">{{trap.oid|to_mibname}}</a></td>
+                <td>{{trap.sent_utc|print_date}}</td>
+                <td>{{trap.expires_utc|print_date}}</span></td>
             </tr>
         {% endfor %}
     </table>

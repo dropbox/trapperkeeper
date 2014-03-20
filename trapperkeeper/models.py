@@ -1,6 +1,6 @@
-from datetime import datetime
 import os
 import subprocess
+import pytz
 
 from sqlalchemy import create_engine
 from sqlalchemy import (
@@ -8,9 +8,11 @@ from sqlalchemy import (
     ForeignKey, Enum, DateTime, BigInteger
 )
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref, sessionmaker
 
-from constants import NAME_TO_PY_MAP, SNMP_TRAP_OID, ASN_TO_NAME_MAP
+from trapperkeeper.constants import NAME_TO_PY_MAP, SNMP_TRAP_OID, ASN_TO_NAME_MAP
+from trapperkeeper.utils import utcnow
 
 
 Session = sessionmaker()
@@ -26,13 +28,21 @@ class Notification(Model):
 
     id = Column(Integer, primary_key=True)
 
-    sent = Column(DateTime, default=datetime.now)
+    sent = Column(DateTime, default=utcnow)
     expires = Column(DateTime, default=None, nullable=True)
     host = Column(String(length=255))
     trap_type = Column(Enum("trap", "trap2", "inform"))
     version = Column(Enum("v1", "v2c", "v3"))
     request_id = Column(BigInteger)
     oid = Column(String(length=1024))
+
+    @property
+    def sent_utc(self):
+        return self.sent.replace(tzinfo=pytz.UTC)
+
+    @property
+    def expires_utc(self):
+        return None if self.expires is None else self.expires.replace(tzinfo=pytz.UTC)
 
     def pprint(self):
         print "Host:", self.host
@@ -60,7 +70,7 @@ class Notification(Model):
         # v1 doesn't have request_id. Use timestamp in it's place.
         request_id = int(proto_module.apiTrapPDU.getTimeStamp(pdu))
 
-        now = datetime.now()
+        now = utcnow()
         trap = Notification(host=host, sent=now, trap_type=trap_type, request_id=request_id, version=version, oid=trapoid)
 
         for oid, val in proto_module.apiTrapPDU.getVarBinds(pdu):
@@ -93,7 +103,7 @@ class Notification(Model):
         if not trapoid:
             return
 
-        now = datetime.now()
+        now = utcnow()
         trap = Notification(host=host, sent=now, trap_type=trap_type, request_id=request_id, version=version, oid=trapoid)
         for oid, val_type, val in varbinds:
             trap.varbinds.append(VarBind(oid=oid, value_type=val_type, value=val))

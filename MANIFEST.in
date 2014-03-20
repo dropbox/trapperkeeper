@@ -2,6 +2,7 @@ include LICENSE
 include README
 include README.md
 include requirements.txt
+recursive-include tests *
 recursive-include trapdoor/static *
 recursive-include trapdoor/templates *
 recursive-include trapperkeeper/templates *

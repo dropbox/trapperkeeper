@@ -1,6 +1,8 @@
+import datetime
 from jinja2 import Environment, PackageLoader
 import logging
 from oid_translate import ObjectId
+import pytz
 import re
 import struct
 import socket
@@ -149,3 +151,5 @@ class CachingResolver(object):
         return result[1]
 
 
+def utcnow():
+    return datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)

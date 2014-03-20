@@ -43,13 +43,13 @@ a.link, .clickable-row {
 
 .table-hover tbody tr.danger td,
 .table-hover tbody tr.danger {
-  background-color: #ff6666;
+  background-color: #ffa1a1;
   color: #000;
 }
 
 .table-hover tbody tr.danger:hover td,
 .table-hover tbody tr.danger:hover {
-  background-color: #f15151;
+  background-color: #f08c8c;
 }
 
 td.buttons-column {
