@@ -12,7 +12,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref, sessionmaker
 
-from trapperkeeper.constants import NAME_TO_PY_MAP, SNMP_TRAP_OID, ASN_TO_NAME_MAP
+from trapperkeeper.constants import NAME_TO_PY_MAP, SNMP_TRAP_OID, ASN_TO_NAME_MAP, SEVERITIES
 from trapperkeeper.utils import utcnow, to_mibname, varbind_pretty_value
 
 
@@ -36,6 +36,7 @@ class Notification(Model):
     version = Column(Enum("v1", "v2c", "v3"))
     request_id = Column(BigInteger)
     oid = Column(String(length=1024))
+    severity = Column(Enum(*SEVERITIES), default="warning")
 
     @property
     def sent_utc(self):

@@ -63,6 +63,7 @@ class Handlers(object):
             "mail": {
                 "subject": "%(hostname)s %(trap_name)s",
             },
+            "severity": "warning",
             "blackhole": False,
         }
         Handlers.update(defaults, config.get("defaults", {}))

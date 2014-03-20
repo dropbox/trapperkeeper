@@ -3,6 +3,8 @@ from pysnmp.proto import rfc1902
 from pyasn1.type import univ
 
 
+SEVERITIES = ("informational", "warning", "critical")
+
 SNMP_VERSIONS = {
     0: "v1",
     1: "v2c",

@@ -82,6 +82,7 @@ class TrapperCallback(object):
 
         trap = Notification.from_pdu(host, proto_module, version, req_pdu)
         handler = self.config.handlers[trap.oid]
+        trap.severity = handler["severity"]
 
         if handler.get("expiration", None):
             expires = parse_time_string(handler["expiration"])

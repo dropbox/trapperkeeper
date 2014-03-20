@@ -5,10 +5,12 @@ traphandlers:
 templates:
     critical:
         expiration: null
+        severity: critical
 
 defaults:
     expiration: "15m"
     blackhole: false
+    severity: warning
     mail:
 #        recipients: "root@localhost"
 
