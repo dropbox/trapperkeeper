@@ -5,17 +5,32 @@ from sqlalchemy import desc, func, or_
 from trapdoor.utils import TrapdoorHandler
 from trapperkeeper.models import Notification, VarBind
 
+def filter_query(query, hostname, oid, severity):
+    if hostname is not None:
+        query = query.filter(Notification.host == hostname)
+
+    if oid is not None:
+        query = query.filter(Notification.oid == oid)
+
+    if severity is not None:
+        query = query.filter(Notification.severity == severity)
+
+    return query
+
 
 class Index(TrapdoorHandler):
     def get(self):
 
         now = datetime.utcnow()
+
         offset = int(self.get_argument("offset", 0))
         limit = int(self.get_argument("limit", 50))
         if limit > 100:
             limit = 100
+
         hostname = self.get_argument("hostname", None)
         oid = self.get_argument("oid", None)
+        severity = self.get_argument("severity", None)
 
         active_query = (self.db
             .query(Notification)
@@ -25,12 +40,7 @@ class Index(TrapdoorHandler):
              ))
             .order_by(desc(Notification.sent))
         )
-
-        if hostname is not None:
-            active_query = active_query.filter(Notification.host == hostname)
-
-        if oid is not None:
-            active_query = active_query.filter(Notification.oid == oid)
+        active_query = filter_query(active_query, hostname, oid, severity)
 
         total_active = active_query.count()
         traps = active_query.offset(offset).limit(limit).all()
@@ -49,18 +59,12 @@ class Index(TrapdoorHandler):
                 .filter(Notification.expires < now)
                 .order_by(desc(Notification.sent))
             )
-
-            if hostname is not None:
-                expired_query = expired_query.filter(Notification.host == hostname)
-
-            if oid is not None:
-                expired_query = expired_query.filter(Notification.oid == oid)
-
+            expired_query = filter_query(expired_query, hostname, oid, severity)
             traps += expired_query.offset(remaining_offset).limit(limit - num_active).all()
 
         return self.render(
             "index.html", traps=traps, now=now, num_active=num_active,
-            hostname=hostname, oid=oid, offset=offset, limit=limit)
+            hostname=hostname, oid=oid, severity=severity, offset=offset, limit=limit)
 
 class Resolve(TrapdoorHandler):
     def post(self):

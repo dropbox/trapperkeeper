@@ -5,20 +5,27 @@
 <div class="row"><div class="span11">
     
     <div class="pull-left">
-    {% if hostname %}
-        <h4>
-            <a class="btn btn-default btn-xs" href="/{{ update_qs(request.arguments, offset=0, hostname=[]) }}">
-                <span class="fa fa-times"></span>
-            </a> Hostname <small>{{ hostname|hostname_or_ip }}</small>
-        </h4>
-    {% endif %}
-    {% if oid %}
-        <h4>
-            <a class="btn btn-default btn-xs" href="/{{ update_qs(request.arguments, offset=0, oid=[]) }}">
-                <span class="fa fa-times"></span>
-            </a> Trap <small>{{ oid|to_mibname }}</small>
-        </h4>
-    {% endif %}
+        {% if hostname %}
+            <h4>
+                <a class="btn btn-default btn-xs" href="/{{ update_qs(request.arguments, offset=0, hostname=[]) }}">
+                    <span class="fa fa-times"></span>
+                </a> Hostname <small>{{ hostname|hostname_or_ip }}</small>
+            </h4>
+        {% endif %}
+        {% if oid %}
+            <h4>
+                <a class="btn btn-default btn-xs" href="/{{ update_qs(request.arguments, offset=0, oid=[]) }}">
+                    <span class="fa fa-times"></span>
+                </a> Trap <small>{{ oid|to_mibname }}</small>
+            </h4>
+        {% endif %}
+        {% if severity %}
+            <h4>
+                <a class="btn btn-default btn-xs" href="/{{ update_qs(request.arguments, offset=0, severity=[]) }}">
+                    <span class="fa fa-times"></span>
+                </a> Severity <small>{{ severity }}</small>
+            </h4>
+        {% endif %}
     </div>
 
     <form method="post" action="/resolve_all">
@@ -40,6 +47,17 @@
             <li><a href="{{ update_qs(request.arguments, limit=25) }}">25</a></li>
             <li><a href="{{ update_qs(request.arguments, limit=50) }}">50</a></li>
             <li><a href="{{ update_qs(request.arguments, limit=100) }}">100</a></li>
+        </ul>
+    </div>
+    <div class="btn-group pull-right" style="padding-right: 10px;">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            Severity: {{severity|capitalize}} <span class="caret"></span>
+        </button>
+            <ul class="dropdown-menu" role="menu">
+            <li><a href="{{ update_qs(request.arguments, severity=[]) }}">None</a></li>
+            <li><a href="{{ update_qs(request.arguments, severity='informational') }}">Informational</a></li>
+            <li><a href="{{ update_qs(request.arguments, severity='warning') }}">Warning</a></li>
+            <li><a href="{{ update_qs(request.arguments, severity='critical') }}">Critical</a></li>
         </ul>
     </div>
     <div class="btn-group pull-right" style="padding-right: 10px;">
