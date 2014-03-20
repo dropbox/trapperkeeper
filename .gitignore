@@ -3,9 +3,6 @@ MANIFEST
 *.log
 *.sqlite
 
-# TODO(gary) Remove when opensourcing
-trapperkeeper.yaml
-
 # C extensions
 *.so
 

@@ -1,0 +1,16 @@
+traphandlers:
+    "SNMPv2-MIB::coldStart":
+        use: "critical"
+
+templates:
+    critical:
+        expiration: null
+
+defaults:
+    expiration: "15m"
+    blackhole: false
+    mail:
+#        recipients: "root@localhost"
+
+config:
+    database: "sqlite:///trapperkeeper.sqlite"

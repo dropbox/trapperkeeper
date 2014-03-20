@@ -1,0 +1,5 @@
+debug: true
+database: "sqlite:///trapperkeeper.sqlite"
+num_processes: 1
+port: 8888
+timezone: "America/Los_Angeles"

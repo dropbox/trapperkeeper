@@ -12,6 +12,7 @@ import tornado.web
 import trapdoor
 from trapdoor.routes import HANDLERS
 from trapdoor.utils import jinja2_filters, jinja2_globals
+from trapdoor.settings import settings, update_from_config
 from trapperkeeper.models import get_db_engine, Session
 from trapperkeeper.utils import get_template_env, get_loglevel, CachingResolver
 
@@ -26,14 +27,6 @@ class Application(tornado.web.Application):
         super(Application, self).__init__(*args, **kwargs)
 
 
-config = {
-    "debug": True,
-    "database": "sqlite:///trapperkeeper.sqlite",
-    "num_processes": 1,
-    "port": 8888,
-}
-
-
 def main(argv):
 
     parser = argparse.ArgumentParser(description="SNMP Trap Web Viewer.")
@@ -45,14 +38,15 @@ def main(argv):
                         version="%%(prog)s %s" % trapdoor.__version__,
                         help="Display version information.")
     args = parser.parse_args()
+    update_from_config(args.config)
 
-    if config["debug"] and config["num_processes"] > 1:
+    if settings["debug"] and settings["num_processes"] > 1:
         logging.fatal("Debug mode does not support multiple processes.")
         sys.exit(1)
 
     tornado_settings = {
         "static_path": os.path.join(os.path.dirname(trapdoor.__file__), "static"),
-        "debug": config["debug"],
+        "debug": settings["debug"],
         "xsrf_cookies": True,
     }
 
@@ -64,10 +58,10 @@ def main(argv):
     )
     template_env.globals.update(jinja2_globals)
 
-    db_engine = get_db_engine(config["database"])
+    db_engine = get_db_engine(settings["database"])
     Session.configure(bind=db_engine)
     my_settings = {
-        "debug": config["debug"],
+        "debug": settings["debug"],
         "db_engine": db_engine,
         "db_session": Session,
         "template_env": template_env,
@@ -85,8 +79,8 @@ def main(argv):
     application = Application(HANDLERS, my_settings=my_settings, **tornado_settings)
 
     server = tornado.httpserver.HTTPServer(application)
-    server.bind(config["port"])
-    server.start(config["num_processes"])
+    server.bind(settings["port"])
+    server.start(settings["num_processes"])
     try:
         load_mibs()
         tornado.ioloop.IOLoop.instance().start()
