@@ -36,6 +36,23 @@ a.link, .clickable-row {
     cursor: pointer;
 }
 
+table>tbody>tr>td.trap-extend {
+    margin: 0px;
+    padding: 0px;
+}
+
+.table-hover tbody tr:hover td.trap-extend,
+.table-hover tbody tr td.trap-extend,
+.toggle-details > tr:hover
+{
+    background-color: #f9f9f9;
+    cursor: default;
+}
+
+.toggle-details {
+    padding: 8px;
+}
+
 .table-hover tbody tr:hover td,
 .table-hover tbody tr:hover {
   background-color: #ddd;

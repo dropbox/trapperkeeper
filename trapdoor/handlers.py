@@ -1,8 +1,9 @@
 from datetime import datetime
+import json
 from sqlalchemy import desc, func, or_
 
 from trapdoor.utils import TrapdoorHandler
-from trapperkeeper.models import Notification
+from trapperkeeper.models import Notification, VarBind
 
 
 class Index(TrapdoorHandler):
@@ -11,6 +12,8 @@ class Index(TrapdoorHandler):
         now = datetime.utcnow()
         offset = int(self.get_argument("offset", 0))
         limit = int(self.get_argument("limit", 50))
+        if limit > 100:
+            limit = 100
         hostname = self.get_argument("hostname", None)
         oid = self.get_argument("oid", None)
 
@@ -58,11 +61,6 @@ class Index(TrapdoorHandler):
         return self.render(
             "index.html", traps=traps, now=now, num_active=num_active,
             hostname=hostname, oid=oid, offset=offset, limit=limit)
-
-class Traps(TrapdoorHandler):
-    def get(self):
-        hostname = self.get_argument("hostname")
-        oid = self.get_argument("oid")
 
 class Resolve(TrapdoorHandler):
     def post(self):
@@ -113,3 +111,9 @@ class NotFound(TrapdoorHandler):
     def get(self):
         return self.notfound()
 
+
+class ApiVarBinds(TrapdoorHandler):
+    def get(self, notification_id):
+        varbinds = self.db.query(VarBind).filter(VarBind.notification_id == notification_id).all()
+        varbinds = [varbind.to_dict(True) for varbind in varbinds]
+        self.write(json.dumps(varbinds))

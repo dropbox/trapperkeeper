@@ -1,29 +1,54 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>{% block title %} Trapdoor {% endblock %}</title>
-    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" media="screen">
-    <link href="/static/css/trapdoor.css" rel="stylesheet" media="screen">
-    {% block extra_head %} {% endblock %}
-  </head>
-  <body>
-    <div class="container">
-      <div class="row">
-        <nav class="navbar navbar-default" role="navigation">
-          <a class="navbar-brand" href="/">trapdoor.</a>
-        </nav>
-      </div>
+    <head>
+        <title>{% block title %} Trapdoor {% endblock %}</title>
+        <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" media="screen">
+        <link href="/static/css/trapdoor.css" rel="stylesheet" media="screen">
+        {% block extra_head %} {% endblock %}
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <nav class="navbar navbar-default" role="navigation">
+                    <a class="navbar-brand" href="/">trapdoor.</a>
+                </nav>
+            </div>
 
-      <div class="row content">
-        {% block content %} {% endblock %}
-      </div>
-    </div>
+            <div class="row content">
+                {% block content %} {% endblock %}
+            </div>
+        </div>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.runtime.js"></script>
 
-    {% block script %} {% endblock %}
-  </body>
+        <script type="text/javascript">
+            Handlebars.registerHelper("ifEmpty", function(context, options) {
+                if ($.isEmptyObject(context)) {
+                    return options.fn(this);
+                }
+                return options.inverse(this);
+            });
+
+            Handlebars.registerHelper('mibFormat', function(name) {
+
+                name = Handlebars.Utils.escapeExpression(name);
+                var delim = "::";
+
+                if (name.indexOf(delim) == -1) return name;
+
+                var parts = name.split(delim);
+                var module = parts.shift();
+                var mibname = parts.join(delim);
+                var result = "<small>" + module + "::</small>" + mibname;
+
+                return new Handlebars.SafeString(result);
+            });
+        </script>
+
+        {% block script %} {% endblock %}
+    </body>
 </html>
 

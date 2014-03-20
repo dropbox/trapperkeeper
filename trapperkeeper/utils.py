@@ -45,28 +45,28 @@ def parse_time_string(time_string):
     return times
 
 
-def _to_mibname_filter(value):
-    return ObjectId(value).name
+def to_mibname(oid):
+    return ObjectId(oid).name
 
 
-def _varbind_value_filter(value):
-    output = value.value
-    objid = ObjectId(value.oid)
+def varbind_pretty_value(varbind):
+    output = varbind.value
+    objid = ObjectId(varbind.oid)
 
-    if value.value_type == "ipaddress":
+    if varbind.value_type == "ipaddress":
         try:
-            name = socket.gethostbyaddr(value.value)[0]
+            name = socket.gethostbyaddr(varbind.value)[0]
             output = "%s (%s)" % (name, output)
         except socket.error:
             pass
-    elif value.value_type == "oid":
-        output = _to_mibname_filter(value.value)
-    elif value.value_type == "octet":
+    elif varbind.value_type == "oid":
+        output = to_mibname(varbind.value)
+    elif varbind.value_type == "octet":
         if objid.textual == "DateAndTime":
-            output = decode_date(value.value)
+            output = decode_date(varbind.value)
 
-    if objid.enums and value.value.isdigit():
-        val = int(value.value)
+    if objid.enums and varbind.value.isdigit():
+        val = int(varbind.value)
         output = objid.enums.get(val, val)
 
     if objid.units:
@@ -88,8 +88,8 @@ def decode_date(hex_string):
 
 def get_template_env(package="trapperkeeper", **kwargs):
     filters = {
-        "to_mibname": _to_mibname_filter,
-        "varbind_value": _varbind_value_filter,
+        "to_mibname": to_mibname,
+        "varbind_value": varbind_pretty_value,
     }
     filters.update(kwargs)
     env = Environment(loader=PackageLoader(package, "templates"))

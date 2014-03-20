@@ -83,7 +83,9 @@
         {% endif %}
         {% for trap in traps %}
             {% set expired = trap.expires != None and now >= trap.expires %}
-            <tr class="clickable-row {% if not expired %}danger{% endif %}">
+            <tr class="clickable-row {% if not expired %}danger{% endif %}"
+                data-toggle="collapse" data-target="#toggle-details-{{trap.id}}"
+                data-trap-id="{{trap.id}}">
                 <td class="buttons-column">
                     {% if not expired %}
                         <form method="post" action="/resolve">
@@ -100,6 +102,12 @@
                 <td><a href="/{{ update_qs(request.arguments, offset=0, oid=trap.oid) }}">{{trap.oid|to_mibname}}</a></td>
                 <td>{{trap.sent_utc|print_date}}</td>
                 <td>{{trap.expires_utc|print_date}}</span></td>
+            </tr>
+            <tr id="trap-details-row-{{trap.id}}" class="trap-details-row">
+                <td class="trap-extend" colspan="5">
+                    <div id="toggle-details-{{trap.id}}" class="collapse toggle-details">
+                    </div>
+                </td>
             </tr>
         {% endfor %}
     </table>
@@ -131,10 +139,24 @@
 {% endblock %}
 
 {% block script %}
+    <script src="static/js/hb_templates.min.js"></script>
     <script type="text/javascript">
         $(function($) {
             $(".clickable-row").click(function(event) {
-                console.log("Clicked!")
+                var $this = $(this);
+                if ($this.data("details-grabbed")){
+                    return;
+                }
+                $this.data("details-grabbed", "1")
+
+                var trap_id = $this.data("trap-id");
+                var $details_div = $("#toggle-details-" + trap_id);
+
+                $.getJSON("/api/varbinds/" + trap_id, function(data){
+                    $details_div.append(
+                        Handlebars.templates.trap_details({ varbinds: data })
+                    );
+                });
             });
         });
     </script>

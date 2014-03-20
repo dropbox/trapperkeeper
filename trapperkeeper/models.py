@@ -1,3 +1,4 @@
+from oid_translate import ObjectId
 import os
 import subprocess
 import pytz
@@ -12,7 +13,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref, sessionmaker
 
 from trapperkeeper.constants import NAME_TO_PY_MAP, SNMP_TRAP_OID, ASN_TO_NAME_MAP
-from trapperkeeper.utils import utcnow
+from trapperkeeper.utils import utcnow, to_mibname, varbind_pretty_value
 
 
 Session = sessionmaker()
@@ -131,6 +132,20 @@ class VarBind(Model):
     oid = Column(String(length=1024))
     value_type = Column(Enum(*NAME_TO_PY_MAP.keys()))
     value = Column(LargeBinary)
+
+    def to_dict(self, pretty=False):
+        out = {
+            "notification_id": self.notification_id,
+            "oid": self.oid,
+            "value_type": self.value_type,
+            "value": self.value,
+        }
+
+        if pretty:
+            out["name"] = ObjectId(self.oid).name
+            out["pretty_value"] = varbind_pretty_value(self)
+
+        return out
 
     def pprint(self):
         print "\t", self.oid, "(%s)" % self.value_type, "=", self.value

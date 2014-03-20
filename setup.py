@@ -19,9 +19,10 @@ def get_package_data(package, base_dir):
         for dirname in dirnames:
             get_package_data(package, dirname)
 
-get_package_data("trapperkeeper", "trapperkeeper/templates")
-get_package_data("trapdoor", "trapdoor/templates")
+get_package_data("trapdoor", "trapdoor/handlebars")
 get_package_data("trapdoor", "trapdoor/static")
+get_package_data("trapdoor", "trapdoor/templates")
+get_package_data("trapperkeeper", "trapperkeeper/templates")
 
 kwargs = {
     "name": "trapperkeeper",
