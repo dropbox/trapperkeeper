@@ -55,7 +55,9 @@ class Index(TrapdoorHandler):
 
             traps += expired_query.offset(remaining_offset).limit(limit - num_active).all()
 
-        return self.render("index.html", traps=traps, now=now, num_active=num_active, limit=limit)
+        return self.render(
+            "index.html", traps=traps, now=now, num_active=num_active,
+            hostname=hostname, oid=oid, offset=offset, limit=limit)
 
 class Traps(TrapdoorHandler):
     def get(self):

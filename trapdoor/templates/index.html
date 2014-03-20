@@ -3,6 +3,24 @@
 {% block content %}
 
 <div class="row"><div class="span11">
+    
+    <div class="pull-left">
+    {% if hostname %}
+        <h4>
+            <a class="btn btn-default btn-xs" href="/{{ update_qs(request.arguments, offset=0, hostname=[]) }}">
+                <span class="fa fa-times"></span>
+            </a> Hostname <small>{{ hostname|hostname_or_ip }}</small>
+        </h4>
+    {% endif %}
+    {% if oid %}
+        <h4>
+            <a class="btn btn-default btn-xs" href="/{{ update_qs(request.arguments, offset=0, oid=[]) }}">
+                <span class="fa fa-times"></span>
+            </a> Trap <small>{{ oid|to_mibname }}</small>
+        </h4>
+    {% endif %}
+    </div>
+
     <form method="post" action="/resolve_all">
         {{ xsrf_form_html() }}
         <button
@@ -19,11 +37,31 @@
             Limit: {{limit}} <span class="caret"></span>
         </button>
             <ul class="dropdown-menu" role="menu">
-            <li><a href="#">25</a></li>
-            <li><a href="#">50</a></li>
-            <li><a href="#">100</a></li>
+            <li><a href="{{ update_qs(request.arguments, limit=25) }}">25</a></li>
+            <li><a href="{{ update_qs(request.arguments, limit=50) }}">50</a></li>
+            <li><a href="{{ update_qs(request.arguments, limit=100) }}">100</a></li>
         </ul>
     </div>
+    <div class="btn-group pull-right" style="padding-right: 10px;">
+        {% if offset == 0 %}
+            <a class="btn btn-default disabled"><i class="fa fa-angle-double-left"></i></a>
+        {% else %}
+            <a class="btn btn-default" href="/{{ update_qs(request.arguments, offset=0) }}"><i class="fa fa-angle-double-left"></i></a>
+        {% endif %}
+
+        {% if offset != 0 %}
+            <a class="btn btn-default" href="/{{ update_qs(request.arguments, offset=offset-limit) }}"><i class="fa fa-angle-left"></i></a>
+        {% else %}
+            <a class="btn btn-default disabled"><i class="fa fa-angle-left"></i></a>
+        {% endif %}
+
+        {% if traps|length < limit %}
+            <a class="btn btn-default disabled"><i class="fa fa-angle-right"></i></a>
+        {% else %}
+            <a class="btn btn-default" href="/{{ update_qs(request.arguments, offset=offset+limit) }}"><i class="fa fa-angle-right"></i></a>
+        {% endif %}
+    </div>
+
 </div></div>
 
 
@@ -45,8 +83,7 @@
         {% endif %}
         {% for trap in traps %}
             {% set expired = trap.expires != None and now >= trap.expires %}
-            <tr class="clickable-row {% if not expired %}danger{% endif %}"
-                href="/traps?oid={{trap.oid}}&hostname={{trap.host}}">
+            <tr class="clickable-row {% if not expired %}danger{% endif %}">
                 <td class="buttons-column">
                     {% if not expired %}
                         <form method="post" action="/resolve">
@@ -59,8 +96,8 @@
                         </form>
                     {% endif %}
                 </td>
-                <td><a href="?hostname={{trap.host}}">{{trap.host|hostname_or_ip}}</a></td>
-                <td><a href="?oid={{trap.oid}}">{{trap.oid|to_mibname}}</a></td>
+                <td><a href="/{{ update_qs(request.arguments, offset=0, hostname=trap.host) }}">{{trap.host|hostname_or_ip}}</a></td>
+                <td><a href="/{{ update_qs(request.arguments, offset=0, oid=trap.oid) }}">{{trap.oid|to_mibname}}</a></td>
                 <td>{{trap.sent_utc|print_date}}</td>
                 <td>{{trap.expires_utc|print_date}}</span></td>
             </tr>
@@ -68,13 +105,36 @@
     </table>
 </div></div>
 
+<div class="row"><div class="span11 center">
+    <div class="btn-group">
+        {% if offset == 0 %}
+            <a class="btn btn-default disabled"><i class="fa fa-angle-double-left"></i></a>
+        {% else %}
+            <a class="btn btn-default" href="/{{ update_qs(request.arguments, offset=0) }}"><i class="fa fa-angle-double-left"></i></a>
+        {% endif %}
+
+        {% if offset != 0 %}
+            <a class="btn btn-default" href="/{{ update_qs(request.arguments, offset=offset-limit) }}"><i class="fa fa-angle-left"></i></a>
+        {% else %}
+            <a class="btn btn-default disabled"><i class="fa fa-angle-left"></i></a>
+        {% endif %}
+
+        {% if traps|length < limit %}
+            <a class="btn btn-default disabled"><i class="fa fa-angle-right"></i></a>
+        {% else %}
+            <a class="btn btn-default" href="/{{ update_qs(request.arguments, offset=offset+limit) }}"><i class="fa fa-angle-right"></i></a>
+        {% endif %}
+    </div>
+</div></div>
+
+
 {% endblock %}
 
 {% block script %}
     <script type="text/javascript">
         $(function($) {
             $(".clickable-row").click(function(event) {
-                window.document.location = $(this).attr("href");
+                console.log("Clicked!")
             });
         });
     </script>

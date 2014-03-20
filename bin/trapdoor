@@ -11,7 +11,7 @@ import tornado.web
 
 import trapdoor
 from trapdoor.routes import HANDLERS
-from trapdoor.utils import FILTERS
+from trapdoor.utils import jinja2_filters, jinja2_globals
 from trapperkeeper.models import get_db_engine, Session
 from trapperkeeper.utils import get_template_env, get_loglevel, CachingResolver
 
@@ -60,8 +60,9 @@ def main(argv):
     template_env = get_template_env(
         "trapdoor",
         hostname_or_ip=resolver.hostname_or_ip,
-        **FILTERS
+        **jinja2_filters
     )
+    template_env.globals.update(jinja2_globals)
 
     db_engine = get_db_engine(config["database"])
     Session.configure(bind=db_engine)

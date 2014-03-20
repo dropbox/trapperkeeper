@@ -1,5 +1,6 @@
 import pytz
 import tornado.web
+import urllib
 
 class TrapdoorHandler(tornado.web.RequestHandler):
 
@@ -34,6 +35,16 @@ def print_date(date_obj):
     return date_obj.strftime("%Y-%m-%d %I:%M %p")
 
 
-FILTERS = {
+jinja2_filters = {
     "print_date": print_date,
+}
+
+
+def update_qs(qs, **kwargs):
+    qs = qs.copy()
+    qs.update(kwargs)
+    return "?" + urllib.urlencode(qs, True)
+
+jinja2_globals = {
+    "update_qs": update_qs,
 }
