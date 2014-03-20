@@ -41,11 +41,6 @@ table>tbody>tr>td.trap-extend {
     padding: 0px;
 }
 
-tr td:first-child {
-    width: 1%;
-    white-space: nowrap;
-}
-
 .toggle-details {
     padding: 8px;
 }
