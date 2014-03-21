@@ -26,6 +26,14 @@ $ python -m trapperkeeper.cmds.sync_db -c /path/to/trapperkeeper.yaml
 
 ### trapdoor
 
+## TODO
+
+  * Runtime rules language for things like blackhole and e-mail subjects.
+  * Allow Custom E-mail templates for TrapperKeeper
+  * cdnjs prefix for local cdnjs mirrors
+  * User ACLs for resolution
+  * Logging resolving user
+
 ## Known Issues
 
   * Doesn't currently support SNMPv3
