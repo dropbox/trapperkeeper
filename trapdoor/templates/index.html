@@ -193,6 +193,10 @@
                     $details_div.append(
                         Handlebars.templates.trap_details({ varbinds: data })
                     );
+                }).fail(function(jqxhr, textStatus, error){
+                    $details_div.append(
+                        "<blockquote>Failed to get VarBinds. Please refresh.</blockquote>"
+                    );
                 });
             });
         });
