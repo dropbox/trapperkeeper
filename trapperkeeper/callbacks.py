@@ -6,6 +6,7 @@ from pyasn1.codec.ber import decoder
 from pyasn1.type.error import ValueConstraintError
 from pysnmp.proto import api
 import socket
+from sqlalchemy.exc import IntegrityError
 
 from trapperkeeper.constants import SNMP_VERSIONS
 from trapperkeeper.models import Notification
@@ -83,6 +84,7 @@ class TrapperCallback(object):
         trap = Notification.from_pdu(host, proto_module, version, req_pdu)
         handler = self.config.handlers[trap.oid]
         trap.severity = handler["severity"]
+        trap.manager = self.hostname
 
         if handler.get("expiration", None):
             expires = parse_time_string(handler["expiration"])
@@ -100,6 +102,12 @@ class TrapperCallback(object):
 
         logging.info("Trap Received (%s) from %s", objid.name, host)
 
-        self.conn.add(trap)
-        self.conn.commit()
+        try:
+            self.conn.add(trap)
+            self.conn.commit()
+        except IntegrityError as err:
+            self.conn.rollback()
+            logging.info("IntegrityError for %s from %s. Likely already inserted by another manager.", objid.name, host)
+            logging.debug(err)
+
         self._send_mail(handler, trap)

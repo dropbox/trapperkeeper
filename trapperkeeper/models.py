@@ -6,7 +6,8 @@ import pytz
 from sqlalchemy import create_engine
 from sqlalchemy import (
     Column, Integer, String, LargeBinary,
-    ForeignKey, Enum, DateTime, BigInteger
+    ForeignKey, Enum, DateTime, BigInteger,
+    UniqueConstraint,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -26,17 +27,26 @@ def get_db_engine(url):
 class Notification(Model):
 
     __tablename__ = "notifications"
+    __table_args__ = (
+        UniqueConstraint("host", "request_id", "oid", "trunc_sent"),
+    )
 
     id = Column(Integer, primary_key=True)
 
-    sent = Column(DateTime, default=utcnow)
-    expires = Column(DateTime, default=None, nullable=True)
-    host = Column(String(length=255))
+    sent = Column(DateTime, default=utcnow, index=True)
+    # This column is used to give a safer guarantee againt duplicate traps
+    # coming into the system when running multiple trapperkeeper instances.
+    # There is still a race condition where multiple traps could be on both
+    # sides of the truncated time stamp.
+    trunc_sent = Column(String(length=12))
+    expires = Column(DateTime, default=None, nullable=True, index=True)
+    host = Column(String(length=255), index=True)
+    manager = Column(String(length=255), index=True)
     trap_type = Column(Enum("trap", "trap2", "inform"))
     version = Column(Enum("v1", "v2c", "v3"))
     request_id = Column(BigInteger)
-    oid = Column(String(length=1024))
-    severity = Column(Enum(*SEVERITIES), default="warning")
+    oid = Column(String(length=1024), index=True)
+    severity = Column(Enum(*SEVERITIES), default="warning", index=True)
 
     @property
     def sent_utc(self):
@@ -73,7 +83,10 @@ class Notification(Model):
         request_id = int(proto_module.apiTrapPDU.getTimeStamp(pdu))
 
         now = utcnow()
-        trap = Notification(host=host, sent=now, trap_type=trap_type, request_id=request_id, version=version, oid=trapoid)
+        trunc_now = now.replace(minute=now.minute / 10 * 10).strftime("%Y%m%d%H%M")
+        trap = Notification(
+            host=host, sent=now, trunc_sent=trunc_now, trap_type=trap_type,
+            request_id=request_id, version=version, oid=trapoid)
 
         for oid, val in proto_module.apiTrapPDU.getVarBinds(pdu):
             oid = oid.prettyPrint()
@@ -106,7 +119,10 @@ class Notification(Model):
             return
 
         now = utcnow()
-        trap = Notification(host=host, sent=now, trap_type=trap_type, request_id=request_id, version=version, oid=trapoid)
+        trunc_now = now.replace(minute=now.minute / 10 * 10).strftime("%Y%m%d%H%M")
+        trap = Notification(
+            host=host, sent=now, trunc_sent=trunc_now, trap_type=trap_type,
+            request_id=request_id, version=version, oid=trapoid)
         for oid, val_type, val in varbinds:
             trap.varbinds.append(VarBind(oid=oid, value_type=val_type, value=val))
 
