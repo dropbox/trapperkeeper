@@ -27,7 +27,7 @@ get_package_data("trapperkeeper", "trapperkeeper/templates")
 kwargs = {
     "name": "trapperkeeper",
     "version": str(__version__),
-    "packages": ["trapperkeeper", "trapdoor"],
+    "packages": ["trapperkeeper", "trapperkeeper.cmds", "trapdoor"],
     "package_data": package_data,
     "scripts": ["bin/trapperkeeper", "bin/trapdoor"],
     "description": "SNMP Trap Daemon.",
