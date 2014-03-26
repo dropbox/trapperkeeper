@@ -29,7 +29,10 @@ class TrapperCallback(object):
         except Exception as err:
             logging.exception("Callback Failed: %s", err)
 
-    def _send_mail(self, handler, trap):
+    def _send_mail(self, handler, trap, is_duplicate):
+        if is_duplicate and not handler["mail_on_duplicate"]:
+            return
+
         mail = handler["mail"]
         if not mail:
             return
@@ -102,12 +105,15 @@ class TrapperCallback(object):
 
         logging.info("Trap Received (%s) from %s", objid.name, host)
 
+
+        duplicate = False
         try:
             self.conn.add(trap)
             self.conn.commit()
         except IntegrityError as err:
+            duplicate = True
             self.conn.rollback()
-            logging.info("IntegrityError for %s from %s. Likely already inserted by another manager.", objid.name, host)
+            logging.info("Duplicate Trap (%s) from %s. Likely inserted by another manager.", objid.name, host)
             logging.debug(err)
 
-        self._send_mail(handler, trap)
+        self._send_mail(handler, trap, duplicate)

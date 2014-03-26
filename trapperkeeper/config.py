@@ -65,6 +65,7 @@ class Handlers(object):
             },
             "severity": "warning",
             "blackhole": False,
+            "mail_on_duplicate": False,
         }
         Handlers.update(defaults, config.get("defaults", {}))
 
