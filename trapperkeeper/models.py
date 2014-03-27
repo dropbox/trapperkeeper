@@ -1,20 +1,17 @@
 from oid_translate import ObjectId
-import os
-import subprocess
 import pytz
 
 from sqlalchemy import create_engine
 from sqlalchemy import (
     Column, Integer, String, LargeBinary,
     ForeignKey, Enum, DateTime, BigInteger,
-    UniqueConstraint,
+    Index
 )
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref, sessionmaker
 
 from trapperkeeper.constants import NAME_TO_PY_MAP, SNMP_TRAP_OID, ASN_TO_NAME_MAP, SEVERITIES
-from trapperkeeper.utils import utcnow, to_mibname, varbind_pretty_value
+from trapperkeeper.utils import utcnow, varbind_pretty_value
 
 
 Session = sessionmaker()
@@ -28,7 +25,9 @@ class Notification(Model):
 
     __tablename__ = "notifications"
     __table_args__ = (
-        UniqueConstraint("host", "request_id", "oid", "trunc_sent"),
+        Index("duplicate", "host", "request_id", "oid", "trunc_sent", unique=True, mysql_length={
+            "oid": 255,
+        }),
     )
 
     id = Column(Integer, primary_key=True)
