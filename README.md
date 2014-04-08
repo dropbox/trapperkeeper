@@ -1,8 +1,8 @@
 # trapperkeeper
 
 ## Description
-TrapperKeeper is a suite a tools for ingesting and displaying SNMP traps. This 
-is designed as a replacement for snmptrapd and to supplements existing stateful
+TrapperKeeper is a suite of tools for ingesting and displaying SNMP traps. This 
+is designed as a replacement for snmptrapd and to supplement existing stateful
 monitoring solutions.
 
 ## Installation
