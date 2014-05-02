@@ -24,7 +24,46 @@ $ python -m trapperkeeper.cmds.sync_db -c /path/to/trapperkeeper.yaml
 
 ### trapperkeeper
 
+The trapperkeeper command receives SNMP traps and handles e-mailing and writing
+to the database. An example configuration file with documentation is available [here.](conf/trapperkeeper.yaml)
+
 ### trapdoor
+
+trapdoor is a webserver that provides a view into the existing traps as well as an
+API for viewing the state of traps. An example configuration file with documentation is available [here.](conf/trapdoor.yaml)
+
+![Screenshot](https://raw.githubusercontent.com/dropbox/trapperkeeper/master/images/trapdoor.png)
+
+#### API
+
+##### /api/activetraps
+_*Optional Parameters:*_
+ * hostname
+ * oid
+ * severity
+
+_*Returns:*_
+```javascript
+[
+    (<hostname>, <oid>, <severity>)
+]
+```
+
+##### /api/varbinds/<notification_id>
+
+_*Returns:*_
+```javascript
+[
+    {
+        "notification_id": <notification_id>,
+        "name": <varbind_name>,
+        "pretty_value": <pretty_value>,
+        "oid": <oid>,
+        "value": <value>,
+        "value_type": <value_type>
+    }
+]
+```
 
 ## TODO
 
