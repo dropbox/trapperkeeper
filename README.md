@@ -12,7 +12,7 @@ makes it possible to poll the service for active traps and alert off of those
 traps.
 
 One example might be a humidity alert. If you cross over the humity threshold
-and it clears immediately you might not want to be paged at 3am. But if a
+and it clears immediately you might not want to be paged at 3am. But if it
 continues to send a trap every 5 minutes while it's over that threshold the
 combination of (hostname, oid, severity) will remain in an active state as
 long as that trap's expiration duration is longer than 5 minutes. This allows
@@ -21,7 +21,8 @@ than some period of time.
 
 Another benefit is allowing aggregation of pages. Previously we'd just had an
 e-mail to a pager per trap but now we're only paged based on the alert interval
-regardless of how many traps we receive.
+regardless of how many traps we receive. This also allows us to schedule
+downtime for a device during scheduled maintenance to avoid trap storms.
 
 ## Installation
 
