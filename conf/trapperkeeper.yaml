@@ -29,7 +29,7 @@ defaults:
     #  out this section. If mail is null no e-mail will be sent.
     mail:
         # The subject to use for mail that is sent. The following
-        # format strings are availble to use:
+        # format strings are available to use:
         #   hostname:  The hostname of the agent that sent the trap.
         #   ipaddress: The IP address of the agent that sent the trap.
         #   trap_name: The textual name for the received trap.

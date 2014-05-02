@@ -17,7 +17,7 @@ num_processes: 8
 port: 8888
 
 # All traps are stored in the database in UTC. This option chooses the
-# timezone for displaying datatimes.
+# timezone for displaying datetime values.
 #
 # Type: str
 timezone: "America/Los_Angeles"
