@@ -1,5 +1,89 @@
+# Trap handlers are how we react to receiving specified traps. All
+# handlers inherit from the default settings which are configured
+# under the defaults header as well as the possibility of inheriting
+# from a template.
+#
+# Defaults:
+defaults:
+    # Expiration is how long a trap stays in an active state. a null
+    # value will indicate the trap needs to be manually resolved.
+    #
+    # Type: str (time spec)
+    expiration: "15m"
+
+    # Blackhole allows you to drop traps on the floor, never
+    # making it to e-mail or the database. This is useful for
+    # very chatty traps that you don't care about.
+    #
+    # Type: bool
+    blackhole: false
+
+    # Sets the default severity of all traps. Severity is useful
+    # in use with external monitoring. For example you might want to
+    # Page on critical, E-mail on warning, and ignore informational.
+    #
+    # Type str (Allowed informational, warning, critical)
+    severity: "warning"
+
+    # If you don't want mail sent by default you would comment
+    #  out this section. If mail is null no e-mail will be sent.
+    mail:
+        # The subject to use for mail that is sent. The following
+        # format strings are availble to use:
+        #   hostname:  The hostname of the agent that sent the trap.
+        #   ipaddress: The IP address of the agent that sent the trap.
+        #   trap_name: The textual name for the received trap.
+        #   trap_oid:  The OID for the received trap.
+        #
+        # Type: str
+        subject: "%(hostname)s %(trap_name)s"
+
+        # The recipients of the message, comma delimited, for a given
+        # trap. If this value is falsey then no e-mail is sent.
+        #
+        # Type: str
+        recipients: "root@localhost"
+
+    # When running multiple instances of trapperkeeper as a manager for a
+    # given device, the message will be deduplicated in the database. If
+    # you want the e-mail to be sent even when the message has been
+    # deduplicated then mark this true
+    #
+    # Type: bool
+    mail_on_duplicate: false
+
+# Templates allow you to set up a class of traps to reduce the amount of
+# configuration required per handler. All options available above (in the
+# defaults section) are available under templates.
+#
+# Templates:
+templates:
+    # This is the name for the template. You can use any name you like
+    # though I'm overloading the severity names as they map pretty cleanly
+    # to the class of traps I normally receive.
+    critical:
+        expiration: null
+        severity: "critical"
+
+    informational:
+        expiration: "0s"
+        severity: "informational"
+        mail: null
+
+# Finally you have the actual configuration for various traps. In this
+# section you actually have configuration for individual traps. Again
+# all of the options above (defaults) are available with use additional
+# keyword, use, to inherit from templates.
+#
+# Trap Handlers:
 traphandlers:
+    # Name or OID of the trap to match on.
+    #
+    # Type: str
     "SNMPv2-MIB::coldStart":
+        # Template to inherit from.
+        #
+        # Type: str
         use: "critical"
 
     "TRAPPERKEEPER-MIB::testV2Trap":
@@ -8,17 +92,11 @@ traphandlers:
     "TRAPPERKEEPER-MIB::testV1Trap":
         severity: critical
 
-templates:
-    critical:
-        expiration: null
-        severity: critical
-
-defaults:
-    expiration: "15m"
-    blackhole: false
-    severity: warning
-    mail:
-#        recipients: "root@localhost"
-
+# Top level configuration for TrapperKeeper.
 config:
+    # Takes a SqlAlchemy URL to the database to store traps. More details
+    # can be found at the following URL:
+    # http://docs.sqlalchemy.org/en/rel_0_9/core/engines.html#database-urls
+    #
+    # Type: str
     database: "sqlite:///trapperkeeper.sqlite"

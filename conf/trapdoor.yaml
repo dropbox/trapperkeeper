@@ -1,5 +1,29 @@
-debug: true
+# Takes a SqlAlchemy URL to the database to store traps. More details
+# can be found at the following URL:
+# http://docs.sqlalchemy.org/en/rel_0_9/core/engines.html#database-urls
+#
+# Type: str
 database: "sqlite:///trapperkeeper.sqlite"
-num_processes: 1
+
+# Number of worker processes to fork for receving requests. This option
+# is mutually exclusive with debug.
+#
+# Type: int
+num_processes: 8
+
+# The port to listen to requests on.
+#
+# Type: int
 port: 8888
+
+# All traps are stored in the database in UTC. This option chooses the
+# timezone for displaying datatimes.
+#
+# Type: str
 timezone: "America/Los_Angeles"
+
+# Passing debug option down tornado. Useful for development to
+# automatically reload code.
+#
+# Type: bool
+debug: false
