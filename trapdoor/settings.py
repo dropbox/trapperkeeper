@@ -7,6 +7,7 @@ settings = {
     "num_processes": 1,
     "port": 8888,
     "timezone": pytz.timezone("UTC"),
+    "date_format": "%Y-%m-%d %I:%M %p",
 }
 
 def update_from_config(filename):

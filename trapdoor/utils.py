@@ -34,7 +34,7 @@ def print_date(date_obj):
         return ""
 
     date_obj = date_obj.astimezone(settings["timezone"])
-    return date_obj.strftime("%Y-%m-%d %I:%M %p")
+    return date_obj.strftime(settings["date_format"])
 
 
 jinja2_filters = {

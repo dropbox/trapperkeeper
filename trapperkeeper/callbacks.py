@@ -6,7 +6,7 @@ from pyasn1.codec.ber import decoder
 from pyasn1.type.error import ValueConstraintError
 from pysnmp.proto import api
 import socket
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, InvalidRequestError, OperationalError
 
 from trapperkeeper.constants import SNMP_VERSIONS
 from trapperkeeper.models import Notification
@@ -48,8 +48,11 @@ class TrapperCallback(object):
             "hostname": self.resolver.hostname_or_ip(trap.host),
         }
         ctxt = dict(trap=trap, dest_host=self.hostname)
-        send_trap_email(recipients, "trapperkeeper",
-                        subject, self.template_env, ctxt)
+        try:
+            send_trap_email(recipients, "trapperkeeper",
+                            subject, self.template_env, ctxt)
+        except socket.error as err:
+            logging.warning("Failed to send e-mail for trap: %s", err)
 
     def _call(self, transport_dispatcher, transport_domain, transport_address, whole_msg):
         if not whole_msg:
@@ -110,6 +113,14 @@ class TrapperCallback(object):
         try:
             self.conn.add(trap)
             self.conn.commit()
+        except OperationalError as err:
+            self.conn.rollback()
+            logging.warning("Failed to commit: %s", err)
+            # TODO(gary) reread config and reconnect to database
+        except InvalidRequestError as err:
+            # If we get into this state we should rollback any pending changes.
+            self.conn.rollback()
+            logging.warning("Bad state, rolling back transaction: %s", err)
         except IntegrityError as err:
             duplicate = True
             self.conn.rollback()
