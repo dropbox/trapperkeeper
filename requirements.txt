@@ -1,10 +1,10 @@
 Jinja2==2.7.1
 MarkupSafe==0.18
-MySQL-python==1.2.4
+MySQL-python==1.2.5
 PyYAML==3.10
 SQLAlchemy==0.9.1
 backports.ssl-match-hostname==3.4.0.2
-distribute==0.6.28
+distribute==0.6.49
 oid-translate==0.2.2
 pyasn1==0.1.7
 pycrypto==2.6.1
