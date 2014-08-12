@@ -5,6 +5,8 @@ from oid_translate import ObjectId
 from pyasn1.codec.ber import decoder
 from pyasn1.type.error import ValueConstraintError
 from pysnmp.proto import api
+from pysnmp.proto.error import ProtocolError
+
 import socket
 from sqlalchemy.exc import IntegrityError, InvalidRequestError, OperationalError
 
@@ -71,7 +73,7 @@ class TrapperCallback(object):
 
         try:
             req_msg, whole_msg = decoder.decode(whole_msg, asn1Spec=proto_module.Message(),)
-        except ValueConstraintError as err:
+        except (ProtocolError, ValueConstraintError) as err:
             logging.warning("Failed to receive trap (%s) from %s: %s", version, host, err)
             return
         req_pdu = proto_module.apiMessage.getPDU(req_msg)
