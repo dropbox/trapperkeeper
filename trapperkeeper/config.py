@@ -9,7 +9,7 @@ from trapperkeeper.exceptions import ConfigError
 
 class Config(object):
 
-    REQUIRED = set(["database"])
+    REQUIRED = set(["database", "trap_port", "stats_port"])
 
     def __init__(self, config, handlers):
         self._config = config
@@ -24,6 +24,9 @@ class Config(object):
 
     def __contains__(self, elem):
         return elem in self._config
+
+    def get(self, key, default=None):
+        return self._config.get(key, default)
 
     @staticmethod
     def from_file(config_filename, handlers=True):

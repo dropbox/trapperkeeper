@@ -5,9 +5,9 @@ from sqlalchemy import desc, func, or_
 from trapdoor.utils import TrapdoorHandler
 from trapperkeeper.models import Notification, VarBind
 
-def filter_query(query, hostname, oid, severity):
-    if hostname is not None:
-        query = query.filter(Notification.host == hostname)
+def filter_query(query, host, oid, severity):
+    if host is not None:
+        query = query.filter(Notification.host == host)
 
     if oid is not None:
         query = query.filter(Notification.oid == oid)
@@ -28,7 +28,9 @@ class Index(TrapdoorHandler):
         if limit > 100:
             limit = 100
 
-        hostname = self.get_argument("hostname", None)
+        host = self.get_argument("host", None)
+        if host is None:
+            host = self.get_argument("hostname", None)
         oid = self.get_argument("oid", None)
         severity = self.get_argument("severity", None)
 
@@ -40,7 +42,7 @@ class Index(TrapdoorHandler):
              ))
             .order_by(desc(Notification.sent))
         )
-        active_query = filter_query(active_query, hostname, oid, severity)
+        active_query = filter_query(active_query, host, oid, severity)
 
         total_active = active_query.count()
         traps = active_query.offset(offset).limit(limit).all()
@@ -59,23 +61,23 @@ class Index(TrapdoorHandler):
                 .filter(Notification.expires < now)
                 .order_by(desc(Notification.sent))
             )
-            expired_query = filter_query(expired_query, hostname, oid, severity)
+            expired_query = filter_query(expired_query, host, oid, severity)
             traps += expired_query.offset(remaining_offset).limit(limit - num_active).all()
 
         return self.render(
             "index.html", traps=traps, now=now, num_active=num_active,
-            hostname=hostname, oid=oid, severity=severity, offset=offset, limit=limit)
+            host=host, oid=oid, severity=severity, offset=offset, limit=limit)
 
 class Resolve(TrapdoorHandler):
     def post(self):
-        hostname = self.get_argument("host")
+        host = self.get_argument("host")
         oid = self.get_argument("oid")
 
         now = datetime.utcnow()
 
         traps = (self.db.query(Notification)
             .filter(
-                Notification.host == hostname,
+                Notification.host == host,
                 Notification.oid == oid,
                 or_(
                     Notification.expires >= now,
@@ -127,7 +129,9 @@ class ApiActiveTraps(TrapdoorHandler):
     def get(self):
 
         now = datetime.utcnow()
-        hostname = self.get_argument("hostname", None)
+        host = self.get_argument("host", None)
+        if host is None:
+            host = self.get_argument("hostname", None)
         oid = self.get_argument("oid", None)
         severity = self.get_argument("severity", None)
 
@@ -143,7 +147,7 @@ class ApiActiveTraps(TrapdoorHandler):
             .group_by(Notification.host, Notification.oid)
             .order_by(desc(Notification.sent))
         )
-        active_query = filter_query(active_query, hostname, oid, severity)
+        active_query = filter_query(active_query, host, oid, severity)
 
         traps = active_query.all()
         self.write(json.dumps(traps))

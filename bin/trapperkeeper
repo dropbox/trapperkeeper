@@ -1,16 +1,34 @@
 #!/usr/bin/env python
 
 import argparse
+from expvar.stats import stats
 import logging
 import oid_translate
 from pysnmp.carrier.asynsock.dispatch import AsynsockDispatcher
 from pysnmp.carrier.asynsock.dgram import udp
+import threading
+import tornado.ioloop
+import tornado.web
 
 from trapperkeeper.callbacks import TrapperCallback
 from trapperkeeper.config import Config
 from trapperkeeper.models import get_db_engine, Session
 from trapperkeeper.utils import get_template_env, get_loglevel, CachingResolver
 from trapperkeeper import __version__
+
+
+def stats_server(port):
+    class Stats(tornado.web.RequestHandler):
+        def get(self):
+            return self.write(stats.to_dict())
+
+    application = tornado.web.Application([
+        (r"/debug/stats", Stats),
+    ])
+
+    application.listen(port)
+    tornado.ioloop.IOLoop.instance().start()
+
 
 
 def main():
@@ -48,18 +66,24 @@ def main():
     transport_dispatcher = AsynsockDispatcher()
     transport_dispatcher.registerRecvCbFun(cb)
     transport_dispatcher.registerTransport(
-        udp.domainName, udp.UdpSocketTransport().openServerMode(("0.0.0.0", 162))
+        udp.domainName, udp.UdpSocketTransport().openServerMode(("0.0.0.0", int(config["trap_port"])))
     )
 
     transport_dispatcher.jobStarted(1)
+    stats_thread = threading.Thread(target=stats_server, args=(str(config["stats_port"]),))
 
     try:
+        stats_thread.start()
         transport_dispatcher.runDispatcher()
     except KeyboardInterrupt:
         pass
     finally:
-        print "Bye"
+        print "Stopping Transport Dispatcher..."
         transport_dispatcher.closeDispatcher()
+        print "Stopping Stats Thread..."
+        tornado.ioloop.IOLoop.instance().stop()
+        stats_thread.join()
+        print "Bye"
 
 
 if __name__ == "__main__":

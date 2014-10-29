@@ -100,3 +100,18 @@ config:
     #
     # Type: str
     database: "sqlite:///trapperkeeper.sqlite"
+
+    # The path to the Dynamic Decision Engine plugins. This directory will
+    # contain various python classes for modifying d
+    dde_plugin_path: "/etc/trapperkeeper.d/plugins/"
+
+    # The port to listen for traps on.
+    #
+    # Type: int
+    trap_port: 162
+
+    # The port to expose stats on.
+    #
+    # Type: int
+    stats_port: 8889
+

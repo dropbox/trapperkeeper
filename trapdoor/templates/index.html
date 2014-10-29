@@ -5,11 +5,11 @@
 <div class="row"><div class="col-sm-12">
     
     <div class="pull-left">
-        {% if hostname %}
+        {% if host %}
             <h4>
-                <a class="btn btn-default btn-xs" href="/{{ update_qs(request.arguments, offset=0, hostname=[]) }}">
+                <a class="btn btn-default btn-xs" href="/{{ update_qs(request.arguments, offset=0, host=[]) }}">
                     <span class="fa fa-times"></span>
-                </a> Hostname <small>{{ hostname|hostname_or_ip }}</small>
+                </a> Hostname <small>{{ host|hostname_or_ip }}</small>
             </h4>
         {% endif %}
         {% if oid %}
@@ -131,7 +131,7 @@
                         </div>
                     {% endif %}
                 </td>
-                <td><a href="/{{ update_qs(request.arguments, offset=0, hostname=trap.host) }}">{{trap.host|hostname_or_ip}}</a></td>
+                <td><a href="/{{ update_qs(request.arguments, offset=0, host=trap.host) }}">{{trap.host|hostname_or_ip}}</a></td>
                 <td><a href="/{{ update_qs(request.arguments, offset=0, oid=trap.oid) }}">{{trap.oid|to_mibname}}</a></td>
                 <td>{{trap.sent_utc|print_date}}</td>
                 <td>{{trap.expires_utc|print_date}}</span></td>

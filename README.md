@@ -14,7 +14,7 @@ traps.
 One example might be a humidity alert. If you cross over the humity threshold
 and it clears immediately you might not want to be paged at 3am. But if it
 continues to send a trap every 5 minutes while it's over that threshold the
-combination of (hostname, oid, severity) will remain in an active state as
+combination of (host, oid, severity) will remain in an active state as
 long as that trap's expiration duration is longer than 5 minutes. This allows
 something like nagios to alarm when a single trap remains active for greater
 than some period of time.
@@ -57,14 +57,14 @@ API for viewing the state of traps. An example configuration file with documenta
 
 ##### /api/activetraps
 _*Optional Parameters:*_
- * hostname
+ * host
  * oid
  * severity
 
 _*Returns:*_
 ```javascript
 [
-    (<hostname>, <oid>, <severity>)
+    (<host>, <oid>, <severity>)
 ]
 ```
 
