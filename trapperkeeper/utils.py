@@ -76,13 +76,22 @@ def varbind_pretty_value(varbind):
 
 
 def decode_date(hex_string):
-    format_values = []
+    format_values = [
+        0, 0, 0, 0,
+        0, 0, 0, "+",
+        0, 0
+    ]
+
     if hex_string.startswith("0x"):
         hex_string = hex_string[2:].decode("hex")
-    for _slice in DATEANDTIME_SLICES:
-        format_values.append(
-            struct.unpack(_slice[1], hex_string[_slice[0]])[0]
-        )
+
+    for idx, (_slice, s_type) in enumerate(DATEANDTIME_SLICES):
+        try:
+            value = hex_string[_slice]
+        except IndexError:
+            break
+        format_values[idx] = struct.unpack(s_type, value)[0]
+
     return "%d-%d-%d,%d:%d:%d.%d,%s%d:%d" % tuple(format_values)
 
 
