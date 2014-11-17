@@ -1,4 +1,5 @@
 from oid_translate import ObjectId
+import time
 import pytz
 
 from sqlalchemy import create_engine
@@ -54,6 +55,16 @@ class Notification(Model):
     @property
     def expires_utc(self):
         return None if self.expires is None else self.expires.replace(tzinfo=pytz.UTC)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "host": self.host,
+            "oid": self.oid,
+            "severity": self.severity,
+            "sent": time.mktime(self.sent.timetuple()),
+            "expires": time.mktime(self.expires.timetuple()) if self.expires is not None else None,
+        }
 
     def pprint(self):
         print "Host:", self.host

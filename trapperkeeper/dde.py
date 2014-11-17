@@ -38,10 +38,57 @@ class DdeNotification(object):
             for varbind in self._notification.varbinds
         ]
 
+    @property
+    def severity(self):
+        return self.handler["severity"]
+
+    @severity.setter
+    def severity(self, severity):
+        self.handler["severity"] = severity
+
+    @property
+    def expiration(self):
+        return self.handler["expiration"]
+
+    @expiration.setter
+    def expiration(self, expiration):
+        self.handler["expiration"] = expiration
+
+    @property
+    def blackhole(self):
+        return self.handler["blackhole"]
+
+    @blackhole.setter
+    def blackhole(self, blackhole):
+        self.handler["blackhole"] = blackhole
+
+    @property
+    def mail_recipients(self):
+        return self.handler.get("mail", {}).get("recipients")
+
+    @mail_recipients.setter
+    def mail_recipients(self, recipients):
+        if "mail" not in self.handler:
+            self.handler["mail"] = {}
+        self.handler["mail"]["recipients"] = recipients
+
+    @property
+    def mail_subject(self):
+        return self.handler.get("mail", {}).get("subject")
+
+    @mail_subject.setter
+    def mail_subject(self, subject):
+        if "mail" not in self.handler:
+            self.handler["mail"] = {}
+        self.handler["mail"]["subject"] = subject
+
+
+    # Deprecated handlers
+
     def set_severity(self, severity):
         self.handler["severity"] = severity
 
-    def set_expirationo(self, expiration):
+    def set_expiration(self, expiration):
         self.handler["expiration"] = expiration
 
     def set_blackhole(self, blackhole):
