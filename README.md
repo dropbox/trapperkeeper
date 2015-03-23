@@ -11,7 +11,7 @@ traps in an active state for a configured amount of time before expiring. This
 makes it possible to poll the service for active traps and alert off of those
 traps.
 
-One example might be a humidity alert. If you cross over the humity threshold
+One example might be a humidity alert. If you cross over the humidity threshold
 and it clears immediately you might not want to be paged at 3am. But if it
 continues to send a trap every 5 minutes while it's over that threshold the
 combination of (host, oid, severity) will remain in an active state as
