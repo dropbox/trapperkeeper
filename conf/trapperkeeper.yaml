@@ -111,7 +111,8 @@ config:
     # Type: int
     stats_port: 8889
 
-    # Accept traps for this SNMP community.
+    # Only accept traps with the following SNMP community. If community
+    # is a falsey value, then all traps will be allowed through.
     #
     # Type: str
-    community: "public"
+    community: null

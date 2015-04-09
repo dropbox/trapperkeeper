@@ -51,7 +51,7 @@ def main():
     db_engine = get_db_engine(config["database"])
     community = config["community"]
     if not community:
-        community = "public"
+        community = None
     Session.configure(bind=db_engine)
 
     conn = Session()

@@ -96,10 +96,10 @@ class TrapperCallback(object):
         req_pdu = proto_module.apiMessage.getPDU(req_msg)
 
         community = proto_module.apiMessage.getCommunity(req_msg)
-        if community != self.community:
-	    stats.incr("unsupported-notification",1)
-	    logging.warning("Trapperkeeper community is: %s, received trap with community: %s..discarding", self.community, community)
-	    return
+        if self.community and community != self.community:
+            stats.incr("unauthenticated-notification", 1)
+            logging.warning("Received trap from %s with invalid community: %s... discarding", host, community)
+            return
 
         if not req_pdu.isSameTypeWith(proto_module.TrapPDU()):
             stats.incr("unsupported-notification", 1)
