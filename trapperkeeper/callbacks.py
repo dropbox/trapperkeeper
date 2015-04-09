@@ -26,12 +26,13 @@ except ImportError as err:
 
 
 class TrapperCallback(object):
-    def __init__(self, conn, template_env, config, resolver):
+    def __init__(self, conn, template_env, config, resolver, community):
         self.conn = conn
         self.template_env = template_env
         self.config = config
         self.hostname = socket.gethostname()
         self.resolver = resolver
+        self.community = community
 
     def __call__(self, *args, **kwargs):
         try:
@@ -94,8 +95,11 @@ class TrapperCallback(object):
             return
         req_pdu = proto_module.apiMessage.getPDU(req_msg)
 
-        # TODO(gary): Require matching community string or bail.
-        # community = proto_module.apiMessage.getCommunity(req_msg)
+        community = proto_module.apiMessage.getCommunity(req_msg)
+        if community != self.community:
+	    stats.incr("unsupported-notification",1)
+	    logging.warning("Trapperkeeper community is: %s, received trap with community: %s..discarding", self.community, community)
+	    return
 
         if not req_pdu.isSameTypeWith(proto_module.TrapPDU()):
             stats.incr("unsupported-notification", 1)
