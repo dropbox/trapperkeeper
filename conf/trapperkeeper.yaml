@@ -116,3 +116,8 @@ config:
     #
     # Type: str
     community: null
+
+    # Listen for traps on an IPv6 address
+    #
+    # Type: bool
+    ipv6: false
