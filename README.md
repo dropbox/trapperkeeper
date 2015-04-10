@@ -86,7 +86,6 @@ _*Returns:*_
 
 ## TODO
 
-  * Runtime rules language for things like blackhole and e-mail subjects.
   * Allow Custom E-mail templates for TrapperKeeper
   * cdnjs prefix for local cdnjs mirrors
   * User ACLs for resolution
@@ -96,5 +95,4 @@ _*Returns:*_
 
   * Doesn't currently support SNMPv3
   * Doesn't currently support inform
-  * Doesn't support listening on IPv6
   * Certain devices have been known to send negative TimeTicks. pyasn1 fails to handle this.

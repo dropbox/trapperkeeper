@@ -14,7 +14,7 @@ TrapperKeeper will store traps in an active state for a configured
 amount of time before expiring. This makes it possible to poll the
 service for active traps and alert off of those traps.
 
-One example might be a humidity alert. If you cross over the humity
+One example might be a humidity alert. If you cross over the humidity
 threshold and it clears immediately you might not want to be paged at
 3am. But if it continues to send a trap every 5 minutes while it's over
 that threshold the combination of (host, oid, severity) will remain in
@@ -82,7 +82,6 @@ API
 TODO
 ----
 
--  Runtime rules language for things like blackhole and e-mail subjects.
 -  Allow Custom E-mail templates for TrapperKeeper
 -  cdnjs prefix for local cdnjs mirrors
 -  User ACLs for resolution
@@ -93,7 +92,6 @@ Known Issues
 
 -  Doesn't currently support SNMPv3
 -  Doesn't currently support inform
--  Doesn't support listening on IPv6
 -  Certain devices have been known to send negative TimeTicks. pyasn1
    fails to handle this.
 
