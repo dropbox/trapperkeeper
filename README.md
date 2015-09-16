@@ -88,6 +88,7 @@ _*Returns:*_
 TrapperKeeper uses the default mibs via netsnmp. You can see the default path for your system by running `net-snmp-config --default-mibdirs`. You can use the following environment variables usually documented in the `snmpcmd` man page
 
 > MIBS - The list of MIBs to load. Defaults to SNMPv2-TC:SNMPv2-MIB:IF-MIB:IP-MIB:TCP-MIB:UDP-MIB:SNMP-VACM-MIB.
+
 > MIBDIRS - The list of directories to search for MIBs. Defaults to /usr/share/snmp/mibs.
 
 For example I run TrapperKeeper with the following environment to add a directory to the path and load all mibs.
