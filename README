@@ -34,32 +34,35 @@ Installation
 New versions will be updated to PyPI pretty regularly so it should be as
 easy as:
 
-::
+.. code:: bash
 
     $ pip install trapperkeeper
 
 Once you've created a configuration file with your database information
 you can run the following to create the database schema.
 
-``bash $ python -m trapperkeeper.cmds.sync_db -c /path/to/trapperkeeper.yaml``
-## Tools
+.. code:: bash
+
+    $ python -m trapperkeeper.cmds.sync_db -c /path/to/trapperkeeper.yaml
+
+Tools
+-----
 
 trapperkeeper
 ~~~~~~~~~~~~~
 
 The trapperkeeper command receives SNMP traps and handles e-mailing and
 writing to the database. An example configuration file with
-documentation is available `here. <conf/trapperkeeper.yaml>`_
+documentation is available `here. <conf/trapperkeeper.yaml>`__
 
 trapdoor
 ~~~~~~~~
 
 trapdoor is a webserver that provides a view into the existing traps as
 well as an API for viewing the state of traps. An example configuration
-file with documentation is available `here. <conf/trapdoor.yaml>`_
+file with documentation is available `here. <conf/trapdoor.yaml>`__
 
 .. figure:: https://raw.githubusercontent.com/dropbox/trapperkeeper/master/images/trapdoor.png
-   :align: center
    :alt: Screenshot
 
    Screenshot
@@ -71,19 +74,39 @@ API
 
 **Optional Parameters:** \* host \* oid \* severity
 
-**Returns:** ``javascript [     (<host>, <oid>, <severity>) ]``
+**Returns:**
+
+.. code:: javascript
+
+    [
+        (<host>, <oid>, <severity>)
+    ]
 
 /api/varbinds/
 ''''''''''''''
 
 **Returns:**
-``javascript [     {         "notification_id": <notification_id>,         "name": <varbind_name>,         "pretty_value": <pretty_value>,         "oid": <oid>,         "value": <value>,         "value_type": <value_type>     } ]``
-## MIB Configuration
 
-TrapperKeeper uses the default mibs via netsnmp. You can see the default
-path for your system by running ``net-snmp-config --default-mibdirs``.
-You can use the following environment variables usually documented in
-the ``snmpcmd`` man page
+.. code:: javascript
+
+    [
+        {
+            "notification_id": <notification_id>,
+            "name": <varbind_name>,
+            "pretty_value": <pretty_value>,
+            "oid": <oid>,
+            "value": <value>,
+            "value_type": <value_type>
+        }
+    ]
+
+MIB Configuration
+-----------------
+
+``trapperkeeper`` and ``trapdoor`` use the default mibs via netsnmp. You
+can see the default path for your system by running
+``net-snmp-config --default-mibdirs``. You can use the following
+environment variables usually documented in the ``snmpcmd`` man page
 
     MIBS - The list of MIBs to load. Defaults to
     SNMPv2-TC:SNMPv2-MIB:IF-MIB:IP-MIB:TCP-MIB:UDP-MIB:SNMP-VACM-MIB.
@@ -91,8 +114,9 @@ the ``snmpcmd`` man page
     MIBDIRS - The list of directories to search for MIBs. Defaults to
     /usr/share/snmp/mibs.
 
-For example I run TrapperKeeper with the following environment to add a
-directory to the path and load all mibs.
+For example I run both the ``trapperkeeper`` and ``trapdoor`` commands
+with the following environment to add a directory to the path and load
+all mibs.
 
 ``MIBS=ALL MIBDIRS=+/usr/share/mibs/local/``
 
