@@ -28,6 +28,16 @@ alert interval regardless of how many traps we receive. This also allows
 us to schedule downtime for a device during scheduled maintenance to
 avoid trap storms.
 
+Requirements
+------------
+
+Ubuntu
+~~~~~~
+
+.. code:: bash
+
+    $ sudo apt-get install libmysqlclient-dev libsnmp-dev
+
 Installation
 ------------
 
