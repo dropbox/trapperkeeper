@@ -24,6 +24,14 @@ e-mail to a pager per trap but now we're only paged based on the alert interval
 regardless of how many traps we receive. This also allows us to schedule
 downtime for a device during scheduled maintenance to avoid trap storms.
 
+## Requirements
+
+### Ubuntu
+
+```bash
+$ sudo apt-get install libmysqlclient-dev libsnmp-dev
+```
+
 ## Installation
 
 New versions will be updated to PyPI pretty regularly so it should be as easy
